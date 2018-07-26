@@ -1,0 +1,2 @@
+
+-DCATKIN_DEVEL_PREFIX=/home/jb/Dropbox/work/phantom-intelligence/ros_phantom_intelligence/tutorial/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/jb/Dropbox/work/phantom-intelligence/ros_phantom_intelligence/tutorial/catkin_ws/install -G Unix Makefiles

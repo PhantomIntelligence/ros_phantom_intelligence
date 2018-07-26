@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "-- Make sure melodic base is installed ROS environment variable are sourced!"
+echo "-- (if they are not, run : 'source /opt/ros/melodic/setup.bash'"
+
+echo "-- Done!"
