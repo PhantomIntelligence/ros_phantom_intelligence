@@ -1,0 +1,8 @@
+# ROS generated files
+tutorial/catkin_ws/build/
+tutorial/catkin_ws/devel/
+
+
+# Ignore generated docs
+*.dox
+*.wikidoc
