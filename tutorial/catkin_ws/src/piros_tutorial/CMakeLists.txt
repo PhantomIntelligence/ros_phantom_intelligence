@@ -129,30 +129,25 @@ include_directories(
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/piros_tutorial_node.cpp)
 add_executable(${PROJECT_NAME}_talker src/talker.cpp)
-add_executable(${PROJECT_NAME}_listener src/listener.cpp)
-
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 set_target_properties(${PROJECT_NAME}_talker PROPERTIES OUTPUT_NAME talker PREFIX "")
-set_target_properties(${PROJECT_NAME}_listener PROPERTIES OUTPUT_NAME listener PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_talker ${PROJECT_NAME}_generate_messages_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(${PROJECT_NAME}_listener ${PROJECT_NAME}_generate_messages_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_talker ${catkin_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_listener src/listener.cpp)
+set_target_properties(${PROJECT_NAME}_listener PROPERTIES OUTPUT_NAME listener PREFIX "")
+add_dependencies(${PROJECT_NAME}_listener ${PROJECT_NAME}_generate_messages_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_listener ${catkin_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_add_two_ints_server src/add_two_ints_server.cpp)
+set_target_properties(${PROJECT_NAME}_add_two_ints_server PROPERTIES OUTPUT_NAME add_two_ints_server PREFIX "")
+add_dependencies(${PROJECT_NAME}_add_two_ints_server ${PROJECT_NAME}_gencpp)
+target_link_libraries(${PROJECT_NAME}_add_two_ints_server ${catkin_LIBRARIES})
+
+add_executable(${PROJECT_NAME}_add_two_ints_client src/add_two_ints_client.cpp)
+set_target_properties(${PROJECT_NAME}_add_two_ints_client PROPERTIES OUTPUT_NAME add_two_ints_client PREFIX "")
+add_dependencies(${PROJECT_NAME}_add_two_ints_client ${PROJECT_NAME}_gencpp)
+target_link_libraries(${PROJECT_NAME}_add_two_ints_client ${catkin_LIBRARIES})
 
 #############
 ## Install ##
