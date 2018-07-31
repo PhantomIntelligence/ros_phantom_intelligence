@@ -164,11 +164,15 @@ target_link_libraries(${PROJECT_NAME}_add_two_ints_client ${catkin_LIBRARIES})
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
+install(TARGETS 
+    ${PROJECT_NAME}_talker 
+    ${PROJECT_NAME}_listener 
+    ${PROJECT_NAME}_add_two_ints_client 
+    ${PROJECT_NAME}_add_two_ints_server
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
