@@ -7,7 +7,7 @@
     </description>
     <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</maintainer>
     <author>Jean-Benoit Harvey</author>
-    <license>Apache</license>
+    <license>Apache-2.0</license>
 
     <url type="website">https://wiki.ros.org/phantom_intelligence</url>
     <url type="repository">https://github.com/PhantomIntelligence/ros_phantom_intelligence</url>

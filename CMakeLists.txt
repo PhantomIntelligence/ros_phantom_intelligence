@@ -10,6 +10,9 @@ set(AWL16_NODE phantom_intelligence_awl16_node)
 set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
 ################################################
 
+include(cmake_module/setupCMakeMacros.cmake)
+setup_cmake_macros(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
 ######################################################################
 # Complete instructions on how to build this file are present at:    #
 #       http://wiki.ros.org/catkin/CMakeLists.txt                    #
@@ -17,17 +20,6 @@ set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-module/")
-
-######### Phantom Intelligence Gateway ################################################
-include(cmake_module/phantom_intelligence_gateway.cmake)
-
-fetch_phantom_intelligence_gateway(
-        ${PROJECT_SOURCE_DIR}/cmake_module
-        ${PROJECT_BINARY_DIR}/lib/phantom_intelligence_gateway
-)
-#######################################################################################
 
 ######### catkin macro and libraries ##################################################
 set(${PROJECT_NAME}_CATKIN_DEPS
@@ -46,12 +38,12 @@ add_message_files(
         PhantomAWL.msg
 )
 
-generate_messages(DEPENDENCIES std_msgs)
-
 add_service_files(
         DIRECTORY srv
         FILES SendCommandToSensor.srv
 )
+
+generate_messages(DEPENDENCIES std_msgs)
 #######################################################################################
 
 ######### catkin specific configuration ###############################################
@@ -65,8 +57,21 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-# Builds the ${GATEWAY_DRIVER_LIB}
-add_subdirectory(src/driver)
+##### Driver Gateway Lib ##############################################################
+include(cmake_module/SpiritSensorGateway.cmake)
+fetchSpiritSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
+        ${PROJECT_BINARY_DIR}/lib/${EXTERNAL_GATEWAY_LIB_NAME})
+
+file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/driver/gateway/*")
+
+add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES})
+add_dependencies(${GATEWAY_DRIVER_LIB} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${GATEWAY_DRIVER_LIB}
+        ${EXTERNAL_GATEWAY_LIB_NAME}
+        ${catkin_LIBRARIES}
+        )
+
+#######################################################################################
 
 add_executable(${AWL16_NODE}
         ${GATEWAY_DRIVER_LIB}
@@ -75,8 +80,8 @@ add_executable(${AWL16_NODE}
 
 ## Mark executables and libraries for installation
 install(TARGETS
-        ${GATEWAY_DRIVER_LIB}
         ${AWL16_NODE}
+        ${GATEWAY_DRIVER_LIB}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
