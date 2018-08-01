@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>phantom_intelligence</name>
+    <version>0.1.0</version>
+    <description>
+        ROS support for Phantom Intelligence LiDARs.
+    </description>
+    <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</maintainer>
+    <author>Jean-Benoit Harvey</author>
+    <license>Apache</license>
+
+    <url type="website">https://wiki.ros.org/phantom_intelligence</url>
+    <url type="repository">https://github.com/PhantomIntelligence/ros_phantom_intelligence</url>
+    <url type="bugtracker">https://github.com/PhantomIntelligence/ros_phantom_intelligence/issues</url>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <exec_depend>phantom_intelligence_driver</exec_depend>
+    <exec_depend>phantom_intelligence_msgs</exec_depend>
+
+    <export>
+        <metapackage/>
+    </export>
+</package>
