@@ -1,28 +1,23 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>piros_tutorial</name>
-  <version>0.0.0</version>
-  <description>The package done whilst following the ROS tutorial</description>
+    <name>piros_tutorial</name>
+    <version>0.0.0</version>
+    <description>The package done whilst following the ROS tutorial</description>
 
-  <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</maintainer>
-  <license>BSD</license>
-  <author email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</author>
-    
-  <buildtool_depend>catkin</buildtool_depend>
+    <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</maintainer>
+    <license>BSD</license>
+    <author email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</author>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
+    <buildtool_depend>catkin</buildtool_depend>
 
-  <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>std_msgs</build_export_depend>
-  <build_export_depend>message_generation</build_export_depend>
+    <depend>roscpp</depend>
+    <depend>rospy</depend>
+    <depend>std_msgs</depend>
 
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>message_runtime</exec_depend>
+    <build_depend>message_generation</build_depend>
+
+    <build_export_depend>message_generation</build_export_depend>
+
+    <exec_depend>message_runtime</exec_depend>
 
 </package>

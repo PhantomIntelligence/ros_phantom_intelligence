@@ -1,0 +1,15 @@
+file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/gateway/*")
+
+add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES})
+target_link_libraries(${GATEWAY_DRIVER_LIB}
+        ${EXTERNAL_GATEWAY_LIB_NAME}
+        ${catkin_LIBRARIES}
+        )
+
+if(catkin_EXPORTED_TARGETS)
+    add_dependencies(${GATEWAY_DRIVER_LIB} ${catkin_EXPORTED_TARGETS})
+endif()
+
+install(TARGETS ${GATEWAY_DRIVER_LIB}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        )
