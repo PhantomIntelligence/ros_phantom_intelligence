@@ -3,21 +3,19 @@
     <name>phantom_intelligence_msgs</name>
     <version>0.1.0</version>
     <description>
-        ROS message definitions for Phantom Intelligence LiDARs.
+        ROS device driver for Phantom Intelligence LiDARs.
     </description>
     <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</maintainer>
     <author>Jean-Benoit Harvey</author>
     <license>Apache</license>
 
-    <url type="website">https://wiki.ros.org/phantom_intelligence_msgs</url>
+    <url type="website">https://wiki.ros.org/phantom_intelligence_driver</url>
     <url type="repository">https://github.com/PhantomIntelligence/ros_phantom_intelligence</url>
     <url type="bugtracker">https://github.com/PhantomIntelligence/ros_phantom_intelligence/issues</url>
 
     <buildtool_depend>catkin</buildtool_depend>
 
-    <build_depend>message_generation</build_depend>
+    <depend>roscpp</depend>
+    <depend>phantom_intelligence_msgs</depend>
 
-    <depend>std_msgs</depend>
-
-    <exec_depend>message_runtime</exec_depend>
 </package>

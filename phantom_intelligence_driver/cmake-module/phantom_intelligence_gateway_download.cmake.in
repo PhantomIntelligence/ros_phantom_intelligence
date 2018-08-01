@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+project(phantom_intelligence_gateway_download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(
+        phantom_intelligence_gateway
+        SOURCE_DIR "@PHANTOM_INTELLIGENCE_GATEWAY_DOWNLOAD_ROOT@/phantom_intelligence_gateway_src"
+        BINARY_DIR "@PHANTOM_INTELLIGENCE_GATEWAY_DOWNLOAD_ROOT@/phantom_intelligence_gateway_build"
+        GIT_REPOSITORY https://github.com/PhantomIntelligence/SpiritSensorGateway.git
+        GIT_TAG master
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        TEST_COMMAND ""
+)
