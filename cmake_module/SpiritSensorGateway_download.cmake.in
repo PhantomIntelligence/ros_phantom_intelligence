@@ -8,6 +8,7 @@ ExternalProject_Add(
         BINARY_DIR "@SPIRIT_SENSOR_GATEWAY_DOWNLOAD_ROOT@/SpiritSensorGateway-build"
         GIT_REPOSITORY https://github.com/PhantomIntelligence/SpiritSensorGateway.git
         GIT_TAG release
+        BUILD_COMMAND ""
         INSTALL_COMMAND ""
         TEST_COMMAND ""
 )
