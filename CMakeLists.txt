@@ -5,6 +5,8 @@ project(phantom_intelligence)
 
 #### Names #####################################
 set(EXTERNAL_GATEWAY_LIB_NAME SpiritSensorGateway)
+set(EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY "${PROJECT_BINARY_DIR}/lib/${EXTERNAL_GATEWAY_LIB_NAME}")
+set(EXTERNAL_GATEWAY_INCLUDE_DIR "Defined in the fetchSpiritSensorGateway macro")
 set(GATEWAY_DRIVER_LIB gateway_driver)
 set(AWL16_NODE phantom_intelligence_awl16_node)
 set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
@@ -12,6 +14,10 @@ set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
 
 include(cmake_module/setupCMakeMacros.cmake)
 setup_cmake_macros(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+#include(cmake_module/SpiritSensorGateway.cmake)
+fetchSpiritSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
+        ${EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY})
 
 ######################################################################
 # Complete instructions on how to build this file are present at:    #
@@ -35,7 +41,7 @@ find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 add_message_files(
         DIRECTORY msg
         FILES
-        PhantomAWL.msg
+        SpiritFrame.msg
 )
 
 add_service_files(
@@ -48,24 +54,28 @@ generate_messages(DEPENDENCIES std_msgs)
 
 ######### catkin specific configuration ###############################################
 catkin_package(
-        INCLUDE_DIRS include
+        INCLUDE_DIRS include ${EXTERNAL_GATEWAY_INCLUDE_DIR}
         LIBRARIES ${GATEWAY_DRIVER_LIB}
         CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS}
         DEPENDS ${EXTERNAL_GATEWAY_LIB_NAME}
 )
 #######################################################################################
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(
+        include
+        ${EXTERNAL_GATEWAY_INCLUDE_DIR}
+        ${catkin_INCLUDE_DIRS})
 
 ##### Driver Gateway Lib ##############################################################
-include(cmake_module/SpiritSensorGateway.cmake)
-fetchSpiritSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
-        ${PROJECT_BINARY_DIR}/lib/${EXTERNAL_GATEWAY_LIB_NAME})
-
-file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/driver/gateway/*")
+file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/gateway_driver/*")
 
 add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES})
-add_dependencies(${GATEWAY_DRIVER_LIB} ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${GATEWAY_DRIVER_LIB}
+        ${${GATEWAY_DRIVER_LIB}_EXPORTED_TARGETS}
+        ${catkin_EXPORTED_TARGETS}
+        )
+
 target_link_libraries(${GATEWAY_DRIVER_LIB}
         ${EXTERNAL_GATEWAY_LIB_NAME}
         ${catkin_LIBRARIES}
@@ -73,10 +83,24 @@ target_link_libraries(${GATEWAY_DRIVER_LIB}
 
 #######################################################################################
 
+##### AWL16 Node ######################################################################
+file(GLOB AWL16_NODE_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/awl16_node.cpp")
 add_executable(${AWL16_NODE}
+        ${AWL16_NODE_DRIVER_FILES}
+        ${catkin_LIBRARIES}
+        )
+
+add_dependencies(${AWL16_NODE}
+        ${PROJECT_NAME}_generate_messages_cpp
+        ${${AWL16_NODE}_EXPORTED_TARGETS}
+        ${catkin_EXPORTED_TARGETS}
+        )
+
+target_link_libraries(${AWL16_NODE}
         ${GATEWAY_DRIVER_LIB}
         ${catkin_LIBRARIES}
         )
+#######################################################################################
 
 ## Mark executables and libraries for installation
 install(TARGETS
@@ -97,18 +121,19 @@ install(
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
-
-if (CATKIN_ENABLE_TESTING)
-    find_package(roslaunch REQUIRED)
-    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
-
-    # For the test file formatting, see:
-    # https://github.com/ros-drivers/omron/tree/indigo-devel/omron_os32c_driver/test
-    # TODO: remove this comment once a test is done
-    catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
-
-    # parse check all the launch/*.launch files
-    roslaunch_add_file_check(launch)
-    target_link_libraries(${TEST_EXECUTABLE} ${catkin_LIBRARIES})
-endif ()
+# TODO : Add tests
+#
+#if (CATKIN_ENABLE_TESTING)
+#    find_package(roslaunch REQUIRED)
+#    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
+#
+#    # For the test file formatting, see:
+#    # https://github.com/ros-drivers/omron/tree/indigo-devel/omron_os32c_driver/test
+#    # TODO: remove this comment once a test is done
+#    catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
+#
+#    # parse check all the launch/*.launch files
+#    roslaunch_add_file_check(launch)
+#    target_link_libraries(${TEST_EXECUTABLE} ${catkin_LIBRARIES})
+#endif ()
 

@@ -27,8 +27,8 @@ macro(fetchSpiritSensorGateway _download_module_path _download_root)
             ${_download_root}/SpiritSensorGateway-src
             ${_download_root}/SpiritSensorGateway-build
     )
-#    find_package(SpiritSensorGateway REQUIRED)
 
+    set(EXTERNAL_GATEWAY_INCLUDE_DIR "${_download_root}/SpiritSensorGateway-src")
     message(STATUS "Done with SpiritSensorGateway")
     message(STATUS)
 endmacro()
