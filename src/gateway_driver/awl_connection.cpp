@@ -20,20 +20,19 @@
 
 namespace phantom_intelligence_driver
 {
-  using awl::AWLCommunicationStrategy;
   using awl::RawSensorMessage;
-  using awl::MessageTranslationStrategy;
   using awl::AWLAccessLink;
+
   using awl::ROSCommunicationStrategy;
+  using awl::MessageTranslationStrategy;
+  using awl::AWLCommunicationStrategy;
+
   using awl::AWLConnection;
 
-  //  AWLConnection::AWLConnection(ROSCommunicationStrategy* ros_communication_strategy) :
-  //      ros_communication_strategy_(ros_communication_strategy)
-  //  {
-  //  }
-  AWLConnection::AWLConnection()
-  {
-  }
+    AWLConnection::AWLConnection(ROSCommunicationStrategy* ros_communication_strategy) :
+        ros_communication_strategy_(ros_communication_strategy)
+    {
+    }
 
   void AWLConnection::connect()
   {
@@ -41,16 +40,15 @@ namespace phantom_intelligence_driver
     {
       // TODO: throw error and catch it
     }
-    //    awl_access_link_ = new AWLAccessLink(ros_communication_strategy_,
-    //                                         &message_translation_strategy_,
-    //                                         &awl_communication_strategy_);
-    awl_access_link_ = new AWLAccessLink(&server_communication_strategy_,
-                                         &message_translation_strategy_,
-                                         &awl_communication_strategy_);
+        awl_access_link_ = new AWLAccessLink(ros_communication_strategy_,
+                                             &message_translation_strategy_,
+                                             &awl_communication_strategy_);
+    // TODO: get rid of this:
     std::string server_address = "ws://localhost:8080/connect-gateway";
     ROS_INFO("Connecting to sensor... ");
     ROS_INFO("Connecting to server at %s", server_address.c_str());
     awl_access_link_->connect(server_address);
+
     ROS_INFO("Connected!");
     sensor_connected_.store(true);
   }

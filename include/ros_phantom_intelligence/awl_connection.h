@@ -21,7 +21,6 @@
 #include "spirit-sensor-gateway/sensor-communication/KvaserCanCommunicationStrategy.h"
 #include "spirit-sensor-gateway/message-translation/AWLMessageToSpiritMessageTranslationStrategy.h"
 #include "spirit-sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
-#include "spirit-sensor-gateway/server-communication/UWSServerCommunicationStrategy.h"
 
 namespace phantom_intelligence_driver
 {
@@ -32,20 +31,17 @@ namespace phantom_intelligence_driver
   {
 
     using RawSensorMessage = DataFlow::AWLMessage;
-
-    using AWLCommunicationStrategy = SensorCommunication::KvaserCanCommunicationStrategy;
-    using MessageTranslationStrategy = MessageTranslation::AWLMessageToSpiritMessageTranslationStrategy;
+    using AWLAccessLink = SpiritSensorGateway::SensorAccessLink<RawSensorMessage, FormatedFrameMessage>;
 
     using ROSCommunicationStrategy = ServerCommunication::ServerCommunicationStrategy<FormatedFrameMessage>;
-    using ServerCommunicationStrategy = ServerCommunication::UWSServerCommunicationStrategy;
+    using MessageTranslationStrategy = MessageTranslation::AWLMessageToSpiritMessageTranslationStrategy;
+    using AWLCommunicationStrategy = SensorCommunication::KvaserCanCommunicationStrategy;
 
-    using AWLAccessLink = SpiritSensorGateway::SensorAccessLink<RawSensorMessage, FormatedFrameMessage>;
 
     class AWLConnection
     {
     public:
-      //      explicit AWLConnection(ROSCommunicationStrategy* ros_communication_strategy);
-      explicit AWLConnection();
+      explicit AWLConnection(ROSCommunicationStrategy* ros_communication_strategy);
 
       void connect();
 
@@ -55,10 +51,9 @@ namespace phantom_intelligence_driver
 
       bool isSensorConnected() const;
 
-      AWLCommunicationStrategy awl_communication_strategy_;
+      ROSCommunicationStrategy* ros_communication_strategy_;
       MessageTranslationStrategy message_translation_strategy_;
-      //      ROSCommunicationStrategy* ros_communication_strategy_;
-      ServerCommunicationStrategy server_communication_strategy_;
+      AWLCommunicationStrategy awl_communication_strategy_;
 
       AWLAccessLink* awl_access_link_;
 
