@@ -63,6 +63,7 @@ namespace phantom_intelligence_driver
     }
     awl_access_link_->disconnect();
     sensor_connected_.store(false);
+    delete awl_access_link_;
   }
 
   bool AWLConnection::isSensorConnected() const
