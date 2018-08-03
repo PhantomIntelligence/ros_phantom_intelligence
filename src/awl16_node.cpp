@@ -20,7 +20,17 @@
 
 #include <sstream>
 
-// TODO: make a node class that does what "spirit-sensor-gateway/server-communication/UWSServerCommunicationStrategy" does
+/*
+ * TODO: make a class ROSCommunicationStrategy: public ServerCommunicationStrategy<DataFlow::Frame>
+ *  ctor -> takes device location, model, etc...
+ *  connect -> ros::init(...) & cie; ROS_INFO(sensor connected w/ metadata); ...
+ *  disconnect -> ROS_INFO(sensor disconnected, etc;...
+ *  sendMessage -> if(ros::ok()) { receives DataFlow::Frame => SpiritFrame.msg; publish(msg); ros::spinOnce, loop_rate.sleep() };
+ *
+ * TODO: have the awl_connection class use the ROSCommunicationStrategy
+ * TODO: fix this node class so it builds
+ *
+ */
 
 int main(int argc, char** argv)
 {
@@ -32,10 +42,9 @@ int main(int argc, char** argv)
   ros::Publisher awl16_pub = n.advertise<PublicisedMessage>("awl16", 1000);
   ros::Rate loop_rate(10);
 
-//  phantom_intelligence_driver::awl::AWLConnection awl_connection(nullptr);
+  //  phantom_intelligence_driver::awl::AWLConnection awl_connection(nullptr);
   phantom_intelligence_driver::awl::AWLConnection awl_connection;
   awl_connection.connect();
-  ROS_INFO("Connected!");
   awl_connection.disconnect();
   int count = 0;
   while (ros::ok())
