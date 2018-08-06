@@ -14,41 +14,27 @@
 	limitations under the License.
 */
 
-#include "ros/ros.h"
-#include "phantom_intelligence/SpiritFrame.h"
-#include "ros_phantom_intelligence/awl_connection.h"
-
-#include <sstream>
-
-/*
- * TODO: make a class ROSCommunicationStrategy: public ServerCommunicationStrategy<DataFlow::Frame>
- *  ctor -> takes device location, model, etc...
- *  connect -> ros::init(...) & cie; ROS_INFO(sensor connected w/ metadata); ...
- *  disconnect -> ROS_INFO(sensor disconnected, etc;...
- *  sendMessage -> if(ros::ok()) { receives DataFlow::Frame => SpiritFrame.msg; publish(msg); ros::spinOnce, loop_rate.sleep() };
- *
- * TODO: have the awl_connection class use the ROSCommunicationStrategy
- * TODO: fix this node class so it builds
- *
- */
+#include "ros_phantom_intelligence/awl16_connection.h"
 
 int main(int argc, char** argv)
 {
 
+  // TODO: replace the following block by a ROSParameter for the sensor choice
+  using phantom_intelligence_driver::SensorConnection;
   using phantom_intelligence_driver::SensorModel;
-  auto sensor_type = SensorModel::AWL16; // TODO: replace from parameter
+  auto sensor_type = SensorModel::AWL16;
+  auto sensor_model = SensorConnection::fetchModelName(sensor_type).c_str();
 
-  using phantom_intelligence_driver::awl::AWLConnection;
+  ros::init(argc, argv, sensor_model);
 
-  ros::init(argc, argv, AWLConnection::fetchModelName(sensor_type).c_str());
+  using phantom_intelligence_driver::awl16::AWL16Connection;
+  AWL16Connection awl16_connection("0");
 
-  AWLConnection awl_connection(SensorModel::AWL16, "0");
-
-  awl_connection.connect();
+  awl16_connection.connect();
 
   std::this_thread::sleep_for(std::chrono::seconds(10));
 
-  awl_connection.disconnect();
+  awl16_connection.disconnect();
 
   return 0;
 }

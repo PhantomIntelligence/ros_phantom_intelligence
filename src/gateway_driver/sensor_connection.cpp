@@ -14,60 +14,54 @@
 	limitations under the License.
 */
 
-#include <ros/ros.h>
-
-#include "ros_phantom_intelligence/awl_connection.h"
+#include "ros_phantom_intelligence/sensor_connection.h"
 
 namespace phantom_intelligence_driver
 {
-  using awl::RawSensorMessage;
-  using awl::AWLAccessLink;
 
-  using awl::ROSCommunicationStrategy;
-  using awl::MessageTranslationStrategy;
-  using awl::AWLCommunicationStrategy;
-
-  using awl::AWLConnection;
-
-  AWLConnection::AWLConnection(SensorModel sensor_model, std::string const& device_location) :
-      ros_communication_strategy_(fetchModelName(sensor_model)),
-      awl_access_link_(&ros_communication_strategy_, &message_translation_strategy_, &awl_communication_strategy_)
+  SensorConnection::SensorConnection(SensorModel sensor_model, std::string const& device_location) :
+      ros_communication_strategy_(fetchModelName(sensor_model))
   {
   }
 
-  void AWLConnection::connect()
+  void SensorConnection::assertConnectionHasNotBeenEstablished()
   {
     if(isSensorConnected())
     {
+      ROS_WARN("This Sensor Connection has already been established!");
       // TODO: throw error and catch it
-    } else
-    {
-
-      ROS_INFO("Connection...");
-
-      awl_access_link_.connect(PUBLICIZED_TOPIC);
-      sensor_connected_.store(true);
-
-      ROS_INFO("Connection complete!");
     }
+
+    ROS_INFO("Connection...");
   }
 
-  void AWLConnection::disconnect()
+  void SensorConnection::completeConnection()
+  {
+    sensor_connected_.store(true);
+
+    ROS_INFO("Connection complete!");
+  }
+
+  void SensorConnection::assertConnectionHasNotBeenRuptured()
   {
     if(!isSensorConnected())
     {
+      ROS_WARN("This Sensor Connection has already been ruptured!");
       // TODO: throw error and catch it
     }
 
     ROS_INFO("Disconnection...");
+  }
 
-    awl_access_link_.disconnect();
+  void SensorConnection::completeDisconnect()
+  {
     sensor_connected_.store(false);
 
     ROS_INFO("Disconnection complete!");
   }
 
-  std::string AWLConnection::fetchModelName(SensorModel sensor_model)
+
+  std::string SensorConnection::fetchModelName(SensorModel sensor_model)
   {
     switch (sensor_model)
     {
@@ -83,7 +77,7 @@ namespace phantom_intelligence_driver
     }
   }
 
-  bool AWLConnection::isSensorConnected() const
+  bool SensorConnection::isSensorConnected() const
   {
     return sensor_connected_.load();
   }
