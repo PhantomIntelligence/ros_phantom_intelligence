@@ -18,25 +18,34 @@
 #define ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H
 
 #include <ros/ros.h>
+#include "phantom_intelligence/SpiritFrame.h"
 
 #include "spirit-sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
 
 namespace phantom_intelligence_driver
 {
 
-  using FormatedFrameMessage = DataFlow::Frame;
-
-  namespace ServerCommunication
+  namespace ros_communication
   {
-    enum SensorModel
-    {
-      AWL7,
-      AWL16
-    };
 
-    class ROSCommunicationStrategy final : public ServerCommunicationStrategy<FormatedFrameMessage>
+    using FrameMessage = DataFlow::Frame;
+
+    class ROSCommunicationStrategy : public ServerCommunication::ServerCommunicationStrategy<FrameMessage>
     {
-      explicit ROSCommunicationStrategy(SensorModel sensor_model, std::string device_location);
+
+    protected:
+
+      using PublicizedMessage = phantom_intelligence::SpiritFrame;
+
+      using super = ServerCommunication::ServerCommunicationStrategy<FrameMessage>;
+
+      using super::MESSAGE;
+
+      const int ROS_LOOP_RATE = 10;
+
+    public:
+
+      explicit ROSCommunicationStrategy(std::string const& sensor_model);
 
       ~ROSCommunicationStrategy() noexcept final;
 
@@ -47,10 +56,24 @@ namespace phantom_intelligence_driver
       ROSCommunicationStrategy& operator=(ROSCommunicationStrategy const& other)& = delete;
 
       ROSCommunicationStrategy& operator=(ROSCommunicationStrategy&& other) noexcept = delete;
+
+      void openConnection(std::string const& publicizedTopic) override;
+
+      void closeConnection() override;
+
+      void sendMessage(MESSAGE&& message) override;
+
+
+    private:
+
+      std::string sensor_model_;
+
+      ros::NodeHandle node_handle_;
+      ros::Rate loop_rate_;
+      ros::Publisher message_publisher_;
     };
   }
 
-  typedef ServerCommunication::SensorModel SensorModel;
 }
 
 #endif //ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H

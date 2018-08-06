@@ -29,28 +29,27 @@ namespace phantom_intelligence_driver
 
   using awl::AWLConnection;
 
-    AWLConnection::AWLConnection(ROSCommunicationStrategy* ros_communication_strategy) :
-        ros_communication_strategy_(ros_communication_strategy)
-    {
-    }
+  AWLConnection::AWLConnection(SensorModel sensor_model, std::string const& device_location) :
+      ros_communication_strategy_(fetchModelName(sensor_model)),
+      awl_access_link_(&ros_communication_strategy_, &message_translation_strategy_, &awl_communication_strategy_)
+  {
+  }
 
   void AWLConnection::connect()
   {
     if(isSensorConnected())
     {
       // TODO: throw error and catch it
-    }
-        awl_access_link_ = new AWLAccessLink(ros_communication_strategy_,
-                                             &message_translation_strategy_,
-                                             &awl_communication_strategy_);
-    // TODO: get rid of this:
-    std::string server_address = "ws://localhost:8080/connect-gateway";
-    ROS_INFO("Connecting to sensor... ");
-    ROS_INFO("Connecting to server at %s", server_address.c_str());
-    awl_access_link_->connect(server_address);
+    } else
+    {
 
-    ROS_INFO("Connected!");
-    sensor_connected_.store(true);
+      ROS_INFO("Connection...");
+
+      awl_access_link_.connect(PUBLICIZED_TOPIC);
+      sensor_connected_.store(true);
+
+      ROS_INFO("Connection complete!");
+    }
   }
 
   void AWLConnection::disconnect()
@@ -59,9 +58,29 @@ namespace phantom_intelligence_driver
     {
       // TODO: throw error and catch it
     }
-    awl_access_link_->disconnect();
+
+    ROS_INFO("Disconnection...");
+
+    awl_access_link_.disconnect();
     sensor_connected_.store(false);
-    delete awl_access_link_;
+
+    ROS_INFO("Disconnection complete!");
+  }
+
+  std::string AWLConnection::fetchModelName(SensorModel sensor_model)
+  {
+    switch (sensor_model)
+    {
+      case SensorModel::AWL7:
+        return "AWL7";
+        break;
+      case SensorModel::AWL16:
+        return "AWL16";
+        break;
+      default:
+        return "Unrecognized sensor";
+        break;
+    }
   }
 
   bool AWLConnection::isSensorConnected() const

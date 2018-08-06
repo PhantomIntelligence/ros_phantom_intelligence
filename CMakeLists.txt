@@ -72,6 +72,7 @@ file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/gateway_driver/*
 add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES})
 
 add_dependencies(${GATEWAY_DRIVER_LIB}
+        ${PROJECT_NAME}_generate_messages_cpp
         ${${GATEWAY_DRIVER_LIB}_EXPORTED_TARGETS}
         ${catkin_EXPORTED_TARGETS}
         )
@@ -97,6 +98,7 @@ add_dependencies(${AWL16_NODE}
         )
 
 target_link_libraries(${AWL16_NODE}
+        ${EXTERNAL_GATEWAY_LIB_NAME}
         ${GATEWAY_DRIVER_LIB}
         ${catkin_LIBRARIES}
         )

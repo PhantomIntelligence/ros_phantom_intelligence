@@ -34,36 +34,21 @@
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "awl16");
-  ros::NodeHandle n;
 
-  using PublicisedMessage = phantom_intelligence::SpiritFrame;
+  using phantom_intelligence_driver::SensorModel;
+  auto sensor_type = SensorModel::AWL16; // TODO: replace from parameter
 
-  ros::Publisher awl16_pub = n.advertise<PublicisedMessage>("awl16", 1000);
-  ros::Rate loop_rate(10);
+  using phantom_intelligence_driver::awl::AWLConnection;
 
-  //  phantom_intelligence_driver::awl::AWLConnection awl_connection(nullptr);
-  phantom_intelligence_driver::awl::AWLConnection awl_connection;
+  ros::init(argc, argv, AWLConnection::fetchModelName(sensor_type).c_str());
+
+  AWLConnection awl_connection(SensorModel::AWL16, "0");
+
   awl_connection.connect();
+
+  std::this_thread::sleep_for(std::chrono::seconds(10));
+
   awl_connection.disconnect();
-  int count = 0;
-  while (ros::ok())
-  {
-    PublicisedMessage msg;
-
-    std::stringstream ss;
-    ss << "msg: " << count;
-    msg.header.frame_id = ss.str();
-
-    ROS_INFO("%s", msg.header.frame_id.c_str());
-
-    awl16_pub.publish(msg);
-
-    ros::spinOnce();
-
-    loop_rate.sleep();
-    ++count;
-  }
 
   return 0;
 }
