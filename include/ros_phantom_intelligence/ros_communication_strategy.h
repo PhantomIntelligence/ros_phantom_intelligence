@@ -41,7 +41,7 @@ namespace phantom_intelligence_driver
 
       using super::MESSAGE;
 
-      const int ROS_LOOP_RATE = 10;
+      const int ROS_LOOP_RATE = 50;
 
     public:
 
