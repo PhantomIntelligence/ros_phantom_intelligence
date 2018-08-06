@@ -20,7 +20,7 @@
 #include "spirit-sensor-gateway/application/SensorAccessLink.hpp"
 #include "spirit-sensor-gateway/sensor-communication/KvaserCanCommunicationStrategy.h"
 #include "spirit-sensor-gateway/message-translation/AWLMessageToSpiritMessageTranslationStrategy.h"
-#include "spirit-sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
+#include "ros_phantom_intelligence/ROSCommunicationStrategy.h"
 
 namespace phantom_intelligence_driver
 {
