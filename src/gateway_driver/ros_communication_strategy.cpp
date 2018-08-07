@@ -89,34 +89,36 @@ namespace phantom_intelligence_driver
       uint16_t number_of_pixels = pixels.size();
       msg.pixels.reserve(number_of_pixels);
 
-      auto pixels_end = std::end(pixels);
-      auto pixel_iterator = std::begin(pixels);
-      for (pixel_iterator; pixel_iterator != pixels_end; ++pixel_iterator)
+      for (unsigned int pixel_iterator = 0; pixel_iterator < number_of_pixels; ++pixel_iterator)
       {
 
         Pixel current_pixel;
 
-        current_pixel.id = pixel_iterator->ID;
+        current_pixel.id = pixel_iterator;
 
-        auto tracks = *pixel_iterator->getTracks();
-        uint16_t number_of_tracks = tracks.size();
-        current_pixel.tracks.reserve(number_of_tracks);
+        auto tracks = *pixels[pixel_iterator].getTracks();
+        auto number_of_tracks = pixels[pixel_iterator].getCurrentNumberOfTracksInPixel();
 
-        auto tracks_end = std::end(tracks);
-        auto track_iterator = std::begin(tracks);
-        for (track_iterator; track_iterator != tracks_end; ++track_iterator)
+        if(number_of_tracks > 0)
         {
 
-          Track current_track;
+          current_pixel.tracks.reserve(number_of_tracks);
 
-          current_track.id = track_iterator->ID;
-          current_track.confidence_level = track_iterator->confidenceLevel;
-          current_track.intensity = track_iterator->intensity;
-          current_track.acceleration = track_iterator->acceleration;
-          current_track.distance = track_iterator->distance;
-          current_track.speed = track_iterator->speed;
+          for (unsigned int track_iterator = 0; track_iterator < number_of_tracks; ++track_iterator)
+          {
 
-          current_pixel.tracks.push_back(current_track);
+            Track current_track;
+            auto track_from_message = &tracks[track_iterator];
+
+            current_track.id = track_from_message->ID;
+            current_track.confidence_level = track_from_message->confidenceLevel;
+            current_track.intensity = track_from_message->intensity;
+            current_track.acceleration = track_from_message->acceleration;
+            current_track.distance = track_from_message->distance;
+            current_track.speed = track_from_message->speed;
+
+            current_pixel.tracks.push_back(current_track);
+          }
         }
 
         msg.pixels.push_back(current_pixel);
