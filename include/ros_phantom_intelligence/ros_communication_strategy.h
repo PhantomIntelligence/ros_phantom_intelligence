@@ -39,7 +39,6 @@
 #define ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H
 
 #include <ros/ros.h>
-#include "phantom_intelligence/SpiritFrame.h"
 
 #include "spirit-sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
 
@@ -55,8 +54,6 @@ namespace phantom_intelligence_driver
     {
 
     protected:
-
-      using PublicizedMessage = phantom_intelligence::SpiritFrame;
 
       using super = ServerCommunication::ServerCommunicationStrategy<FrameMessage>;
 

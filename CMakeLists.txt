@@ -41,7 +41,9 @@ find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 add_message_files(
         DIRECTORY msg
         FILES
-        SpiritFrame.msg
+        PhantomIntelligenceFrame.msg
+        PhantomIntelligencePixel.msg
+        PhantomIntelligenceTrack.msg
 )
 
 add_service_files(

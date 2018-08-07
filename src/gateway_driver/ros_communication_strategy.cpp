@@ -34,11 +34,23 @@
   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+
 #include "ros_phantom_intelligence/ros_communication_strategy.h"
+
+#include <iterator>
+#include "phantom_intelligence/PhantomIntelligenceFrame.h"
+#include "phantom_intelligence/PhantomIntelligencePixel.h"
+#include "phantom_intelligence/PhantomIntelligenceTrack.h"
 
 namespace phantom_intelligence_driver
 {
   using ros_communication::ROSCommunicationStrategy;
+
+
+  using Frame = phantom_intelligence::PhantomIntelligenceFrame;
+  using Pixel = phantom_intelligence::PhantomIntelligencePixel;
+  using Track = phantom_intelligence::PhantomIntelligenceTrack;
+  using PublicizedMessage = Frame;
 
   ROSCommunicationStrategy::ROSCommunicationStrategy(std::string const& sensor_model) :
       sensor_model_(sensor_model),
@@ -65,12 +77,50 @@ namespace phantom_intelligence_driver
     if(ros::ok())
     {
 
-      PublicizedMessage msg;
-
-      msg.header.frame_id = std::to_string(message.frameID);
+      Frame msg;
 
       msg.header.stamp = ros::Time::now();
       msg.header.seq++;
+
+      msg.frame_id = message.frameID;
+      msg.system_id = message.systemID;
+
+      auto pixels = *message.getPixels();
+      uint16_t number_of_pixels = pixels.size();
+      msg.pixels.reserve(number_of_pixels);
+
+      auto pixels_end = std::end(pixels);
+      auto pixel_iterator = std::begin(pixels);
+      for (pixel_iterator; pixel_iterator != pixels_end; ++pixel_iterator)
+      {
+
+        Pixel current_pixel;
+
+        current_pixel.id = pixel_iterator->ID;
+
+        auto tracks = *pixel_iterator->getTracks();
+        uint16_t number_of_tracks = tracks.size();
+        current_pixel.tracks.reserve(number_of_tracks);
+
+        auto tracks_end = std::end(tracks);
+        auto track_iterator = std::begin(tracks);
+        for (track_iterator; track_iterator != tracks_end; ++track_iterator)
+        {
+
+          Track current_track;
+
+          current_track.id = track_iterator->ID;
+          current_track.confidence_level = track_iterator->confidenceLevel;
+          current_track.intensity = track_iterator->intensity;
+          current_track.acceleration = track_iterator->acceleration;
+          current_track.distance = track_iterator->distance;
+          current_track.speed = track_iterator->speed;
+
+          current_pixel.tracks.push_back(current_track);
+        }
+
+        msg.pixels.push_back(current_pixel);
+      }
 
       message_publisher_.publish(msg);
 
