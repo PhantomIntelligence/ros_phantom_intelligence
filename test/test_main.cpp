@@ -22,6 +22,7 @@ int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ros_communication_strategy_publication_test");
-  ros::NodeHandle node_handle;
-  return RUN_ALL_TESTS();
+  auto result = RUN_ALL_TESTS();
+  ros::shutdown();
+  return result;
 }

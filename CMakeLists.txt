@@ -124,8 +124,9 @@ install(
 )
 
 if (CATKIN_ENABLE_TESTING)
-    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
+    find_package(catkin REQUIRED COMPONENTS rostest)
 
+    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
     catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
     target_link_libraries(${TEST_EXECUTABLE}
             ${EXTERNAL_GATEWAY_LIB_NAME}
