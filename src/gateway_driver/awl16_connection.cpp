@@ -37,23 +37,34 @@
 
 #include "ros_phantom_intelligence/awl16_connection.h"
 
-int main(int argc, char** argv)
+namespace phantom_intelligence_driver
 {
-  ros::init(argc, argv, "AWL16");
+  using awl16::MessageTranslationStrategy;
+  using awl16::AWL16CommunicationStrategy;
 
-  std::string device_location;
+  using awl16::AWL16Connection;
 
-  ros::param::param<std::string>("~device_location", device_location, "0");
+  AWL16Connection::AWL16Connection(std::string const& device_location) :
+      super(SensorModel::AWL16, device_location),
+      awl16_access_link_(&ros_communication_strategy_, &message_translation_strategy_, &awl16_communication_strategy_)
+  {
+  }
 
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
+  void AWL16Connection::connect()
+  {
+    super::assertConnectionHasNotBeenEstablished();
 
-  sensor_connection.connect();
+    awl16_access_link_.connect(PUBLICIZED_TOPIC);
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+    super::completeConnection();
+  }
 
-  sensor_connection.disconnect();
+  void AWL16Connection::disconnect()
+  {
+    super::assertConnectionHasNotBeenRuptured();
 
-  ros::shutdown();
-  return 0;
+    awl16_access_link_.disconnect();
+
+    super::completeDisconnect();
+  }
 }

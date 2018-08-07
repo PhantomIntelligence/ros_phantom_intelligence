@@ -5,9 +5,9 @@
     <description>
         ROS support for Phantom Intelligence LiDARs.
     </description>
-    <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoit Harvey</maintainer>
-    <author>Jean-Benoit Harvey</author>
-    <license>Apache-2.0</license>
+    <maintainer email="jb.harvey@phantomintelligence.com">Jean-Benoît Harvey</maintainer>
+    <author>Jean-Benoît Harvey</author>
+    <license>BSD-3-Clause</license>
 
     <url type="website">https://wiki.ros.org/phantom_intelligence</url>
     <url type="repository">https://github.com/PhantomIntelligence/ros_phantom_intelligence</url>
@@ -23,6 +23,9 @@
     <build_export_depend>message_generation</build_export_depend>
 
     <exec_depend>message_runtime</exec_depend>
+
+    <test_depend>rostest</test_depend>
+    <test_depend>roslaunch</test_depend>
 
     <doc_depend>doxygen</doc_depend>
 

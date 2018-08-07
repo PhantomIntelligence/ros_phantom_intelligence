@@ -35,25 +35,71 @@
 
 */
 
-#include "ros_phantom_intelligence/awl16_connection.h"
+#include "ros_phantom_intelligence/sensor_connection.h"
 
-int main(int argc, char** argv)
+namespace phantom_intelligence_driver
 {
-  ros::init(argc, argv, "AWL16");
 
-  std::string device_location;
+  SensorConnection::SensorConnection(SensorModel sensor_model, std::string const& device_location) :
+      ros_communication_strategy_(fetchModelName(sensor_model))
+  {
+  }
 
-  ros::param::param<std::string>("~device_location", device_location, "0");
+  void SensorConnection::assertConnectionHasNotBeenEstablished()
+  {
+    if(isSensorConnected())
+    {
+      ROS_WARN("This Sensor Connection has already been established!");
+      // TODO: throw error and catch it
+    }
 
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
+    ROS_INFO("Connection...");
+  }
 
-  sensor_connection.connect();
+  void SensorConnection::completeConnection()
+  {
+    sensor_connected_.store(true);
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+    ROS_INFO("Connection complete!");
+  }
 
-  sensor_connection.disconnect();
+  void SensorConnection::assertConnectionHasNotBeenRuptured()
+  {
+    if(!isSensorConnected())
+    {
+      ROS_WARN("This Sensor Connection has already been ruptured!");
+      // TODO: throw error and catch it
+    }
 
-  ros::shutdown();
-  return 0;
+    ROS_INFO("Disconnection...");
+  }
+
+  void SensorConnection::completeDisconnect()
+  {
+    sensor_connected_.store(false);
+
+    ROS_INFO("Disconnection complete!");
+  }
+
+  std::string SensorConnection::fetchModelName(SensorModel sensor_model)
+  {
+    switch (sensor_model)
+    {
+      case SensorModel::AWL7:
+        return "AWL7";
+        break;
+      case SensorModel::AWL16:
+        return "AWL16";
+        break;
+      case SensorModel::UNDEFINED:
+      default:
+        return "UNDEFINED";
+        break;
+    }
+  }
+
+  bool SensorConnection::isSensorConnected() const
+  {
+    return sensor_connected_.load();
+  }
 }

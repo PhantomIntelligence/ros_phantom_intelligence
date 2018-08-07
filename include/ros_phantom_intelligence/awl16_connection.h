@@ -35,25 +35,49 @@
 
 */
 
-#include "ros_phantom_intelligence/awl16_connection.h"
+#ifndef ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
+#define ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
 
-int main(int argc, char** argv)
+#include "ros_phantom_intelligence/sensor_connection.h"
+
+#include "spirit-sensor-gateway/application/SensorAccessLink.hpp"
+#include "spirit-sensor-gateway/message-translation/AWLMessageToSpiritMessageTranslationStrategy.h"
+#include "spirit-sensor-gateway/sensor-communication/KvaserCanCommunicationStrategy.h"
+
+namespace phantom_intelligence_driver
 {
-  ros::init(argc, argv, "AWL16");
 
-  std::string device_location;
+  namespace awl16
+  {
 
-  ros::param::param<std::string>("~device_location", device_location, "0");
+    using ros_communication::FrameMessage;
+    using RawSensorMessage = DataFlow::AWLMessage;
+    using AWL16AccessLink = SpiritSensorGateway::SensorAccessLink<RawSensorMessage, FrameMessage>;
 
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
+    using MessageTranslationStrategy = MessageTranslation::AWLMessageToSpiritMessageTranslationStrategy;
+    using AWL16CommunicationStrategy = SensorCommunication::KvaserCanCommunicationStrategy;
 
-  sensor_connection.connect();
+    class AWL16Connection final : public SensorConnection
+    {
+    protected:
+      using super = SensorConnection;
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+    public:
+      explicit AWL16Connection(std::string const& device_location);
 
-  sensor_connection.disconnect();
+      void connect() override;
 
-  ros::shutdown();
-  return 0;
+      void disconnect() override;
+
+    private:
+
+      using super::ros_communication_strategy_;
+      MessageTranslationStrategy message_translation_strategy_;
+      AWL16CommunicationStrategy awl16_communication_strategy_;
+
+      AWL16AccessLink awl16_access_link_;
+    };
+  }
 }
+
+#endif //ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H

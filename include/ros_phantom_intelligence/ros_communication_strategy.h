@@ -35,25 +35,60 @@
 
 */
 
-#include "ros_phantom_intelligence/awl16_connection.h"
+#ifndef ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H
+#define ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H
 
-int main(int argc, char** argv)
+#include <ros/ros.h>
+
+#include "spirit-sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
+
+namespace phantom_intelligence_driver
 {
-  ros::init(argc, argv, "AWL16");
 
-  std::string device_location;
+  namespace ros_communication
+  {
 
-  ros::param::param<std::string>("~device_location", device_location, "0");
+    using FrameMessage = DataFlow::Frame;
 
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
+    class ROSCommunicationStrategy : public ServerCommunication::ServerCommunicationStrategy<FrameMessage>
+    {
 
-  sensor_connection.connect();
+    protected:
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+      using super = ServerCommunication::ServerCommunicationStrategy<FrameMessage>;
 
-  sensor_connection.disconnect();
+      using super::MESSAGE;
 
-  ros::shutdown();
-  return 0;
+    public:
+
+      explicit ROSCommunicationStrategy(std::string const& sensor_model);
+
+      ~ROSCommunicationStrategy() noexcept final;
+
+      ROSCommunicationStrategy(ROSCommunicationStrategy const& other) = delete;
+
+      ROSCommunicationStrategy(ROSCommunicationStrategy&& other) noexcept = delete;
+
+      ROSCommunicationStrategy& operator=(ROSCommunicationStrategy const& other)& = delete;
+
+      ROSCommunicationStrategy& operator=(ROSCommunicationStrategy&& other) noexcept = delete;
+
+      void openConnection(std::string const& publicizedTopic) override;
+
+      void closeConnection() override;
+
+      void sendMessage(MESSAGE&& message) override;
+
+
+    private:
+
+      std::string sensor_model_;
+
+      ros::NodeHandle node_handle_;
+      ros::Publisher message_publisher_;
+    };
+  }
+
 }
+
+#endif //ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H

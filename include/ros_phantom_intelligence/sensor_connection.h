@@ -35,25 +35,62 @@
 
 */
 
-#include "ros_phantom_intelligence/awl16_connection.h"
+#ifndef ROS_PHANTOM_INTELLIGENCE_SENSORCONNECTION_H
+#define ROS_PHANTOM_INTELLIGENCE_SENSORCONNECTION_H
 
-int main(int argc, char** argv)
+#include "spirit-sensor-gateway/application/SensorAccessLink.hpp"
+
+#include "ros_phantom_intelligence/ros_communication_strategy.h"
+
+namespace phantom_intelligence_driver
 {
-  ros::init(argc, argv, "AWL16");
 
-  std::string device_location;
+  enum SensorModel : uint32_t
+  {
+    AWL7,
+    AWL16,
+    UNDEFINED
+  };
 
-  ros::param::param<std::string>("~device_location", device_location, "0");
+  using ros_communication::FrameMessage;
 
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
+  using ROSCommunicationStrategy = ros_communication::ROSCommunicationStrategy;
 
-  sensor_connection.connect();
+  class SensorConnection
+  {
+  protected:
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+    const std::string PUBLICIZED_TOPIC = "SpiritFrame";
 
-  sensor_connection.disconnect();
+  public:
 
-  ros::shutdown();
-  return 0;
+    explicit SensorConnection(SensorModel sensor_model,
+                              std::string const& device_location);
+
+    virtual void connect() = 0;
+
+    virtual void disconnect() = 0;
+
+  protected:
+
+
+    void assertConnectionHasNotBeenEstablished();
+    void completeConnection();
+    void assertConnectionHasNotBeenRuptured();
+    void completeDisconnect();
+
+    ROSCommunicationStrategy ros_communication_strategy_;
+
+  private:
+
+    static std::string fetchModelName(SensorModel sensor_model);
+
+    bool isSensorConnected() const;
+
+    AtomicFlag sensor_connected_;
+
+    std::string device_location_;
+  };
 }
+
+#endif //ROS_PHANTOM_INTELLIGENCE_SENSORCONNECTION_H

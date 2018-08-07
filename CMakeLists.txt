@@ -41,7 +41,9 @@ find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 add_message_files(
         DIRECTORY msg
         FILES
-        SpiritFrame.msg
+        PhantomIntelligenceFrame.msg
+        PhantomIntelligencePixel.msg
+        PhantomIntelligenceTrack.msg
 )
 
 add_service_files(
@@ -72,6 +74,7 @@ file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/gateway_driver/*
 add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES})
 
 add_dependencies(${GATEWAY_DRIVER_LIB}
+        ${PROJECT_NAME}_generate_messages_cpp
         ${${GATEWAY_DRIVER_LIB}_EXPORTED_TARGETS}
         ${catkin_EXPORTED_TARGETS}
         )
@@ -97,6 +100,7 @@ add_dependencies(${AWL16_NODE}
         )
 
 target_link_libraries(${AWL16_NODE}
+        ${EXTERNAL_GATEWAY_LIB_NAME}
         ${GATEWAY_DRIVER_LIB}
         ${catkin_LIBRARIES}
         )
@@ -121,19 +125,14 @@ install(
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
-# TODO : Add tests
-#
-#if (CATKIN_ENABLE_TESTING)
-#    find_package(roslaunch REQUIRED)
-#    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
-#
-#    # For the test file formatting, see:
-#    # https://github.com/ros-drivers/omron/tree/indigo-devel/omron_os32c_driver/test
-#    # TODO: remove this comment once a test is done
-#    catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
-#
-#    # parse check all the launch/*.launch files
-#    roslaunch_add_file_check(launch)
-#    target_link_libraries(${TEST_EXECUTABLE} ${catkin_LIBRARIES})
-#endif ()
+if (CATKIN_ENABLE_TESTING)
+    find_package(catkin REQUIRED COMPONENTS rostest)
+
+    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
+    catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
+    target_link_libraries(${TEST_EXECUTABLE}
+            ${EXTERNAL_GATEWAY_LIB_NAME}
+            ${GATEWAY_DRIVER_LIB}
+            ${catkin_LIBRARIES})
+endif ()
 
