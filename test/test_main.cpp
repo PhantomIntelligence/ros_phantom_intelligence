@@ -14,25 +14,14 @@
 	limitations under the License.
 */
 
-#include "ros_phantom_intelligence/awl16_connection.h"
+#include <gtest/gtest.h>
+
+#include <ros/ros.h>
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "AWL16");
-
-  std::string device_location;
-
-  ros::param::param<std::string>("~device_location", device_location, "0");
-
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
-
-  sensor_connection.connect();
-
-  std::this_thread::sleep_for(std::chrono::seconds(10));
-
-  sensor_connection.disconnect();
-
-  ros::shutdown();
-  return 0;
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "ros_communication_strategy_publication_test");
+  ros::NodeHandle node_handle;
+  return RUN_ALL_TESTS();
 }

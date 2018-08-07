@@ -14,25 +14,25 @@
 	limitations under the License.
 */
 
-#include "ros_phantom_intelligence/awl16_connection.h"
+#include <gtest/gtest.h>
 
-int main(int argc, char** argv)
+#include <ros/ros.h>
+
+#include "phantom_intelligence/SpiritFrame.h"
+
+class ROSCommunicationStrategyPublicationTest : public ::testing::Test
 {
-  ros::init(argc, argv, "AWL16");
+protected:
+  ROSCommunicationStrategyPublicationTest()
+  {
+  }
 
-  std::string device_location;
+  ~ROSCommunicationStrategyPublicationTest()
+  {
+  }
+};
 
-  ros::param::param<std::string>("~device_location", device_location, "0");
-
-  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
-
-  sensor_connection.connect();
-
-  std::this_thread::sleep_for(std::chrono::seconds(10));
-
-  sensor_connection.disconnect();
-
-  ros::shutdown();
-  return 0;
+TEST_F(ROSCommunicationStrategyPublicationTest,
+    given_aFrameFromTheGateway_when_sendMessage_then_willPublishACorrectlyFormatedSpiritFrame)
+{
 }
