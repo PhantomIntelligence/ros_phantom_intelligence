@@ -97,6 +97,9 @@ namespace phantom_intelligence_driver
         current_pixel.id = pixel_iterator;
 
         auto tracks = *pixels[pixel_iterator].getTracks();
+
+        // For performance reasons, the Gateway sometimes output empty data.
+        // Those won't be published in the ROS Topic
         auto number_of_tracks = pixels[pixel_iterator].getCurrentNumberOfTracksInPixel();
 
         if(number_of_tracks > 0)
