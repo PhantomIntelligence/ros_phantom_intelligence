@@ -123,19 +123,17 @@ install(
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
-# TODO : Add tests
-#
-#if (CATKIN_ENABLE_TESTING)
+if (CATKIN_ENABLE_TESTING)
 #    find_package(roslaunch REQUIRED)
 #    file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
-#
-#    # For the test file formatting, see:
-#    # https://github.com/ros-drivers/omron/tree/indigo-devel/omron_os32c_driver/test
-#    # TODO: remove this comment once a test is done
+
+    # For the test file formatting, see:
+    # https://github.com/ros-drivers/omron/tree/indigo-devel/omron_os32c_driver/test
+    # TODO: remove this comment once a test is done
 #    catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
-#
-#    # parse check all the launch/*.launch files
+
+    # parse check all the launch/*.launch files
 #    roslaunch_add_file_check(launch)
 #    target_link_libraries(${TEST_EXECUTABLE} ${catkin_LIBRARIES})
-#endif ()
+endif ()
 

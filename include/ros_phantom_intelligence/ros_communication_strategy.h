@@ -41,8 +41,6 @@ namespace phantom_intelligence_driver
 
       using super::MESSAGE;
 
-      const int ROS_LOOP_RATE = 50;
-
     public:
 
       explicit ROSCommunicationStrategy(std::string const& sensor_model);
@@ -69,7 +67,6 @@ namespace phantom_intelligence_driver
       std::string sensor_model_;
 
       ros::NodeHandle node_handle_;
-      ros::Rate loop_rate_;
       ros::Publisher message_publisher_;
     };
   }

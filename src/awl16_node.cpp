@@ -18,23 +18,20 @@
 
 int main(int argc, char** argv)
 {
+  ros::init(argc, argv, "AWL16");
 
-  // TODO: replace the following block by a ROSParameter for the sensor choice
-  using phantom_intelligence_driver::SensorConnection;
-  using phantom_intelligence_driver::SensorModel;
-  auto sensor_type = SensorModel::AWL16;
-  auto sensor_model = SensorConnection::fetchModelName(sensor_type).c_str();
+  std::string device_location;
 
-  ros::init(argc, argv, sensor_model);
+  ros::param::param<std::string>("~device_location", device_location, "0");
 
-  using phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection awl16_connection("0");
+  using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
+  AWL16Connection sensor_connection(device_location);
 
-  awl16_connection.connect();
+  sensor_connection.connect();
 
   std::this_thread::sleep_for(std::chrono::seconds(10));
 
-  awl16_connection.disconnect();
+  sensor_connection.disconnect();
 
   return 0;
 }

@@ -22,7 +22,6 @@ namespace phantom_intelligence_driver
 
   ROSCommunicationStrategy::ROSCommunicationStrategy(std::string const& sensor_model) :
       sensor_model_(sensor_model),
-      loop_rate_(ROS_LOOP_RATE),
       message_publisher_(node_handle_.advertise<PublicizedMessage>(sensor_model, 1000))
   {
   }
@@ -50,12 +49,12 @@ namespace phantom_intelligence_driver
 
       msg.header.frame_id = std::to_string(message.frameID);
 
-      ROS_INFO("%s", msg.header.frame_id.c_str());
+      msg.header.stamp = ros::Time::now();
+      msg.header.seq++;
 
       message_publisher_.publish(msg);
 
       ros::spinOnce();
-      loop_rate_.sleep();
     }
   }
 }

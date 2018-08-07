@@ -27,7 +27,8 @@ namespace phantom_intelligence_driver
   enum SensorModel : uint32_t
   {
     AWL7,
-    AWL16
+    AWL16,
+    UNDEFINED
   };
 
   using ros_communication::FrameMessage;
@@ -49,9 +50,8 @@ namespace phantom_intelligence_driver
 
     virtual void disconnect() = 0;
 
-    static std::string fetchModelName(SensorModel sensor_model);
-
   protected:
+
 
     void assertConnectionHasNotBeenEstablished();
     void completeConnection();
@@ -61,6 +61,8 @@ namespace phantom_intelligence_driver
     ROSCommunicationStrategy ros_communication_strategy_;
 
   private:
+
+    static std::string fetchModelName(SensorModel sensor_model);
 
     bool isSensorConnected() const;
 

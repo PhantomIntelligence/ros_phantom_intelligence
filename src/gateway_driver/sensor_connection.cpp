@@ -60,7 +60,6 @@ namespace phantom_intelligence_driver
     ROS_INFO("Disconnection complete!");
   }
 
-
   std::string SensorConnection::fetchModelName(SensorModel sensor_model)
   {
     switch (sensor_model)
@@ -71,8 +70,9 @@ namespace phantom_intelligence_driver
       case SensorModel::AWL16:
         return "AWL16";
         break;
+      case SensorModel::UNDEFINED:
       default:
-        return "Unrecognized sensor";
+        return "UNDEFINED";
         break;
     }
   }

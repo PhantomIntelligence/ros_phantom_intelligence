@@ -24,6 +24,8 @@
 
     <exec_depend>message_runtime</exec_depend>
 
+    <test_depend>rosunit</test_depend>
+
     <doc_depend>doxygen</doc_depend>
 
 </package>
