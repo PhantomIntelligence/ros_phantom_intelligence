@@ -126,13 +126,18 @@ install(
 )
 
 if (CATKIN_ENABLE_TESTING)
-    find_package(catkin REQUIRED COMPONENTS rostest)
+    find_package(catkin REQUIRED COMPONENTS rostest roslaunch)
 
     file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*)
     catkin_add_gtest(${TEST_EXECUTABLE} ${TEST_FILES})
+    add_dependencies(${TEST_EXECUTABLE}
+            ${PROJECT_NAME}_generate_messages_cpp
+            )
     target_link_libraries(${TEST_EXECUTABLE}
             ${EXTERNAL_GATEWAY_LIB_NAME}
             ${GATEWAY_DRIVER_LIB}
             ${catkin_LIBRARIES})
+
+    roslaunch_add_file_check(launch/run_tests.launch)
 endif ()
 

@@ -73,7 +73,6 @@ namespace phantom_intelligence_driver
 
   protected:
 
-
     void assertConnectionHasNotBeenEstablished();
     void completeConnection();
     void assertConnectionHasNotBeenRuptured();
