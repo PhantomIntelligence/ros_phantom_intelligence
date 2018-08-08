@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="phantom_intelligence"
+          type="phantom_intelligence_test"
+          name="phantom_intelligence_test"
+          output="screen"
+          required="true"
+    />
+</launch>

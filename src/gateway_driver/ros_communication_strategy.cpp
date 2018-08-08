@@ -37,7 +37,6 @@
 
 #include "ros_phantom_intelligence/ros_communication_strategy.h"
 
-#include <iterator>
 #include "phantom_intelligence/PhantomIntelligenceFrame.h"
 #include "phantom_intelligence/PhantomIntelligencePixel.h"
 #include "phantom_intelligence/PhantomIntelligenceTrack.h"
