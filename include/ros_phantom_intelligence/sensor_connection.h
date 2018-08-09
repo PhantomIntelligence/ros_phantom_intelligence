@@ -38,8 +38,6 @@
 #ifndef ROS_PHANTOM_INTELLIGENCE_SENSORCONNECTION_H
 #define ROS_PHANTOM_INTELLIGENCE_SENSORCONNECTION_H
 
-#include "spirit-sensor-gateway/application/SensorAccessLink.hpp"
-
 #include "ros_phantom_intelligence/ros_communication_strategy.h"
 
 namespace phantom_intelligence_driver
@@ -60,7 +58,7 @@ namespace phantom_intelligence_driver
   {
   protected:
 
-    const std::string PUBLICIZED_TOPIC = "SpiritFrame";
+    const std::string PUBLICIZED_TOPIC = "SensorFrame";
 
   public:
 
