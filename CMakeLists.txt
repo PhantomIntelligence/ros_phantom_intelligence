@@ -4,9 +4,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(phantom_intelligence)
 
 #### Names #####################################
-set(EXTERNAL_GATEWAY_LIB_NAME SpiritSensorGateway)
+set(EXTERNAL_GATEWAY_LIB_NAME SensorGateway)
 set(EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY "${PROJECT_BINARY_DIR}/lib/${EXTERNAL_GATEWAY_LIB_NAME}")
-set(EXTERNAL_GATEWAY_INCLUDE_DIR "Defined in the fetchSpiritSensorGateway macro")
+set(EXTERNAL_GATEWAY_INCLUDE_DIR "Defined in the fetchSensorGateway macro")
 set(GATEWAY_DRIVER_LIB gateway_driver)
 set(AWL16_NODE phantom_intelligence_awl16_node)
 set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
@@ -15,8 +15,7 @@ set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
 include(cmake_module/setupCMakeMacros.cmake)
 setup_cmake_macros(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-#include(cmake_module/SpiritSensorGateway.cmake)
-fetchSpiritSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
+fetchSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
         ${EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY})
 
 ######################################################################

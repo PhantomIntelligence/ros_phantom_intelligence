@@ -6,5 +6,5 @@ macro(setup_cmake_macros _source_dir _binary_dir)
 
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake_module/")
 
-    include(cmake_module/SpiritSensorGateway.cmake)
+    include(cmake_module/SensorGateway.cmake)
 endmacro()

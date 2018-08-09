@@ -40,7 +40,7 @@
 
 #include <ros/ros.h>
 
-#include "spirit-sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
+#include "sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
 
 namespace phantom_intelligence_driver
 {

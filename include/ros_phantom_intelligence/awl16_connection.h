@@ -40,9 +40,9 @@
 
 #include "ros_phantom_intelligence/sensor_connection.h"
 
-#include "spirit-sensor-gateway/application/SensorAccessLink.hpp"
-#include "spirit-sensor-gateway/message-translation/AWLMessageToSpiritMessageTranslationStrategy.h"
-#include "spirit-sensor-gateway/sensor-communication/KvaserCanCommunicationStrategy.h"
+#include "sensor-gateway/application/SensorAccessLink.hpp"
+#include "sensor-gateway/message-translation/AWLTranslationStrategy.h"
+#include "sensor-gateway/sensor-communication/KvaserCanCommunicationStrategy.h"
 
 namespace phantom_intelligence_driver
 {
@@ -52,9 +52,9 @@ namespace phantom_intelligence_driver
 
     using ros_communication::FrameMessage;
     using RawSensorMessage = DataFlow::AWLMessage;
-    using AWL16AccessLink = SpiritSensorGateway::SensorAccessLink<RawSensorMessage, FrameMessage>;
+    using AWL16AccessLink = SensorGateway::SensorAccessLink<RawSensorMessage, FrameMessage>;
 
-    using MessageTranslationStrategy = MessageTranslation::AWLMessageToSpiritMessageTranslationStrategy;
+    using MessageTranslationStrategy = MessageTranslation::AWLTranslationStrategy;
     using AWL16CommunicationStrategy = SensorCommunication::KvaserCanCommunicationStrategy;
 
     class AWL16Connection final : public SensorConnection

@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+project(SensorGateway_download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(
+        SpiritSensorGateway
+        SOURCE_DIR "@SENSOR_GATEWAY_DOWNLOAD_ROOT@/SensorGateway-src"
+        BINARY_DIR "@SENSOR_GATEWAY_DOWNLOAD_ROOT@/SensorGateway-build"
+        GIT_REPOSITORY https://github.com/PhantomIntelligence/SensorGateway.git
+        GIT_TAG release
+        BUILD_COMMAND   ""
+        INSTALL_COMMAND ""
+        TEST_COMMAND    ""
+)
