@@ -15,7 +15,6 @@ set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
 include(cmake_module/setupCMakeMacros.cmake)
 setup_cmake_macros(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-#include(cmake_module/SensorGateway.cmake)
 fetchSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
         ${EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY})
 
