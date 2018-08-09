@@ -3,7 +3,7 @@ project(SensorGateway_download NONE)
 
 include(ExternalProject)
 ExternalProject_Add(
-        SpiritSensorGateway
+        SensorGateway
         SOURCE_DIR "@SENSOR_GATEWAY_DOWNLOAD_ROOT@/SensorGateway-src"
         BINARY_DIR "@SENSOR_GATEWAY_DOWNLOAD_ROOT@/SensorGateway-build"
         GIT_REPOSITORY https://github.com/PhantomIntelligence/SensorGateway.git
