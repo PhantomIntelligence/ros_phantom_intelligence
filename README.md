@@ -16,7 +16,9 @@ LiDAR integration for ROS
 3. Clone the [ros_phantom_intelligence](https://github.com/PhantomIntelligence/ros_phantom_intelligence) repo:  
     ```
     cd src
-    git clone git@github.com:PhantomIntelligence/ros_phantom_intelligence.git
+    git clone git@github.com:PhantomIntelligence/ros_phantom_intelligence.git  
+    # OR 
+    git clone https://github.com/PhantomIntelligence/ros_phantom_intelligence.git
     ```
 3. Build it
     ```
