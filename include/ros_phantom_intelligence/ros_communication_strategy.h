@@ -39,8 +39,7 @@
 #define ROS_PHANTOM_INTELLIGENCE_ROSCOMMUNICATIONSTRATEGY_H
 
 #include <ros/ros.h>
-
-#include "sensor-gateway/server-communication/ServerCommunicationStrategy.hpp"
+#include <sensor-gateway/server-communication/ServerCommunicationStrategy.hpp>
 
 namespace phantom_intelligence_driver
 {

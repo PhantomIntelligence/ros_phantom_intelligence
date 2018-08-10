@@ -38,11 +38,9 @@
 #ifndef ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
 #define ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
 
-#include "ros_phantom_intelligence/sensor_connection.h"
+#include <sensor-gateway/application/AWL16AccessLink.h>
 
-#include "sensor-gateway/application/SensorAccessLink.hpp"
-#include "sensor-gateway/message-translation/AWLTranslationStrategy.h"
-#include "sensor-gateway/sensor-communication/KvaserCanCommunicationStrategy.h"
+#include "ros_phantom_intelligence/sensor_connection.h"
 
 namespace phantom_intelligence_driver
 {
@@ -50,12 +48,7 @@ namespace phantom_intelligence_driver
   namespace awl16
   {
 
-    using ros_communication::FrameMessage;
-    using RawSensorMessage = DataFlow::AWLMessage;
-    using AWL16AccessLink = SensorGateway::SensorAccessLink<RawSensorMessage, FrameMessage>;
-
-    using MessageTranslationStrategy = MessageTranslation::AWLTranslationStrategy;
-    using AWL16CommunicationStrategy = SensorCommunication::KvaserCanCommunicationStrategy;
+    using AWL16AccessLink = SensorGateway::AWL16AccessLink;
 
     class AWL16Connection final : public SensorConnection
     {
@@ -72,8 +65,6 @@ namespace phantom_intelligence_driver
     private:
 
       using super::ros_communication_strategy_;
-      MessageTranslationStrategy message_translation_strategy_;
-      AWL16CommunicationStrategy awl16_communication_strategy_;
 
       AWL16AccessLink awl16_access_link_;
     };

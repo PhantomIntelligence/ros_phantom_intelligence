@@ -39,14 +39,11 @@
 
 namespace phantom_intelligence_driver
 {
-  using awl16::MessageTranslationStrategy;
-  using awl16::AWL16CommunicationStrategy;
-
   using awl16::AWL16Connection;
 
   AWL16Connection::AWL16Connection(std::string const& device_location) :
       super(SensorModel::AWL16, device_location),
-      awl16_access_link_(&ros_communication_strategy_, &message_translation_strategy_, &awl16_communication_strategy_)
+      awl16_access_link_(&ros_communication_strategy_)
   {
   }
 

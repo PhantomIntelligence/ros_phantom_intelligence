@@ -39,7 +39,7 @@
 #include <random>
 #include <limits>
 #include <gtest/gtest.h>
-#include "sensor-gateway/domain/Frame.h"
+#include <sensor-gateway/domain/Frame.h>
 
 #include "ros_phantom_intelligence/ros_communication_strategy.h"
 
