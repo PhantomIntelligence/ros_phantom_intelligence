@@ -2,7 +2,12 @@
 LiDAR integration for ROS
 
 ## Building and Running this package
-1. Install [melodic](http://wiki.ros.org/melodic) 
+
+1. Install the following elements:  
+ - [melodic](http://wiki.ros.org/melodic) 
+ - [canlib](https://www.kvaser.com/developer/canlib-sdk/) ([linux link](https://www.kvaser.com/linux-drivers-and-sdk/))
+ - [conan](https://conan.io/)
+
 2. Create a **ros/catkin** workspace if you don't have one already:  
     > Here, `ros_ws` refers to the **ros/catkin** workspace.   
 
