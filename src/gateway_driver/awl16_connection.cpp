@@ -47,20 +47,20 @@ namespace phantom_intelligence_driver
   {
   }
 
-  void AWL16Connection::connect()
+  void AWL16Connection::start()
   {
     super::assertConnectionHasNotBeenEstablished();
 
-    awl16_access_link_.connect(PUBLICIZED_TOPIC);
+    awl16_access_link_.start(PUBLICIZED_TOPIC);
 
     super::completeConnection();
   }
 
-  void AWL16Connection::disconnect()
+  void AWL16Connection::terminateAndJoin()
   {
     super::assertConnectionHasNotBeenRuptured();
 
-    awl16_access_link_.disconnect();
+    awl16_access_link_.terminateAndJoin();
 
     super::completeDisconnect();
   }

@@ -1,7 +1,11 @@
 <launch>
     <arg name="device_location" default="0"/>
 
-    <node pkg="phantom_intelligence" type="phantom_intelligence_awl16_node" name="phantom_intelligence_awl16_node">
+    <node pkg="phantom_intelligence"
+          type="phantom_intelligence_awl16_node"
+          name="phantom_intelligence_awl16_node"
+          output="screen"
+          required="true">
         <param name="device_location" value="$(arg device_location)"/>
     </node>
 </launch>

@@ -58,9 +58,9 @@ namespace phantom_intelligence_driver
     public:
       explicit AWL16Connection(std::string const& device_location);
 
-      void connect() override;
+      void start() override;
 
-      void disconnect() override;
+      void terminateAndJoin() override;
 
     private:
 

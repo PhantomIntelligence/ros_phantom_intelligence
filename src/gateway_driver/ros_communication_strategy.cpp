@@ -87,6 +87,7 @@ namespace phantom_intelligence_driver
       auto pixels = *message.getPixels();
       uint16_t number_of_pixels = pixels.size();
       msg.pixels.reserve(number_of_pixels);
+      ROS_INFO("%s", std::to_string(number_of_pixels));
 
       for (unsigned int pixel_iterator = 0; pixel_iterator < number_of_pixels; ++pixel_iterator)
       {

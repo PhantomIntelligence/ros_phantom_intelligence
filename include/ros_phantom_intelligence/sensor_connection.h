@@ -65,9 +65,9 @@ namespace phantom_intelligence_driver
     explicit SensorConnection(SensorModel sensor_model,
                               std::string const& device_location);
 
-    virtual void connect() = 0;
+    virtual void start() = 0;
 
-    virtual void disconnect() = 0;
+    virtual void terminateAndJoin() = 0;
 
   protected:
 

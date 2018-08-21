@@ -48,11 +48,11 @@ int main(int argc, char** argv)
   using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
   AWL16Connection sensor_connection(device_location);
 
-  sensor_connection.connect();
+  sensor_connection.start();
 
-  std::this_thread::sleep_for(std::chrono::seconds(10));
+  std::this_thread::sleep_for(std::chrono::seconds(10000));
 
-  sensor_connection.disconnect();
+  sensor_connection.terminateAndJoin();
 
   ros::shutdown();
   return 0;
