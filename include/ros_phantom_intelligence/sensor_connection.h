@@ -47,13 +47,13 @@ namespace phantom_intelligence_driver
   {
     AWL7,
     AWL16,
+    GUARDIAN,
     UNDEFINED
   };
 
   using ros_communication::FrameMessage;
 
-  using ROSCommunicationStrategy = ros_communication::ROSCommunicationStrategy;
-
+  template<class T>
   class SensorConnection
   {
   protected:
@@ -63,7 +63,10 @@ namespace phantom_intelligence_driver
   public:
 
     explicit SensorConnection(SensorModel sensor_model,
-                              std::string const& device_location);
+                              std::string const& device_location) :
+        ros_communication_strategy_(fetchModelName(sensor_model))
+    {
+    }
 
     virtual void start() = 0;
 
@@ -71,18 +74,70 @@ namespace phantom_intelligence_driver
 
   protected:
 
-    void assertConnectionHasNotBeenEstablished();
-    void completeConnection();
-    void assertConnectionHasNotBeenRuptured();
-    void completeDisconnect();
+    void assertConnectionHasNotBeenEstablished()
+    {
+      if(isSensorConnected())
+      {
+        ROS_WARN("This Sensor Connection has already been established!");
+        // TODO: throw error and catch it
+      }
 
-    ROSCommunicationStrategy ros_communication_strategy_;
+      ROS_INFO("Connection...");
+    }
+
+    void completeConnection()
+    {
+      sensor_connected_.store(true);
+
+      ROS_INFO("Connection complete!");
+    }
+
+    void assertConnectionHasNotBeenRuptured()
+    {
+      if(!isSensorConnected())
+      {
+        ROS_WARN("This Sensor Connection has already been ruptured!");
+        // TODO: throw error and catch it
+      }
+
+      ROS_INFO("Disconnection...");
+    }
+
+    void completeDisconnect()
+    {
+      sensor_connected_.store(false);
+
+      ROS_INFO("Disconnection complete!");
+    }
+
+    ros_communication::ROSCommunicationStrategy <T> ros_communication_strategy_;
 
   private:
 
-    static std::string fetchModelName(SensorModel sensor_model);
+    static std::string fetchModelName(SensorModel sensor_model)
+    {
+      switch (sensor_model)
+      {
+        case SensorModel::AWL7:
+          return "AWL7";
+          break;
+        case SensorModel::AWL16:
+          return "AWL16";
+          break;
+        case SensorModel::GUARDIAN:
+          return "GUARDIAN";
+          break;
+        case SensorModel::UNDEFINED:
+        default:
+          return "UNDEFINED";
+          break;
+      }
+    }
 
-    bool isSensorConnected() const;
+    bool isSensorConnected() const
+    {
+      return sensor_connected_.load();
+    }
 
     AtomicFlag sensor_connected_;
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(phantom_intelligence)
 
@@ -23,8 +23,8 @@ fetchSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
 #       http://wiki.ros.org/catkin/CMakeLists.txt                    #
 ######################################################################
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+## Compile as C++14, 11 is supported in ROS Kinetic and newer, but 14 is required by SensorGateway
+add_compile_options(-std=c++14)
 
 ######### catkin macro and libraries ##################################################
 set(${PROJECT_NAME}_CATKIN_DEPS

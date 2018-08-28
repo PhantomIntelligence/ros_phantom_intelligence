@@ -39,7 +39,8 @@
 #include <random>
 #include <limits>
 #include <gtest/gtest.h>
-#include <sensor-gateway/domain/Frame.h>
+
+#include <sensor-gateway/common/data-structure/spirit/SpiritStructures.h>
 
 #include "ros_phantom_intelligence/ros_communication_strategy.h"
 
@@ -55,7 +56,9 @@ using Track = phantom_intelligence::PhantomIntelligenceTrack;
 class ROSCommunicationStrategyPublicationTest : public ::testing::Test
 {
 protected:
-  const std::string TEST_TOPIC_NAME = "UNDEFINED";
+   std::string const TEST_TOPIC_NAME = "UNDEFINED";
+
+  static size_t const NUMBER_OF_RAW_DATA_FOR_TEST = 10;
 
   ROSCommunicationStrategyPublicationTest()
   {
@@ -64,6 +67,9 @@ protected:
   ~ROSCommunicationStrategyPublicationTest()
   {
   }
+
+  using FakeRawDataContent = typename Sensor::RawDataContent<int16_t, NUMBER_OF_RAW_DATA_FOR_TEST>;
+  using FakeDataStructures = typename Sensor::Spirit::Structures<FakeRawDataContent>;
 
   DataFlow::Frame createRandomFrame() const noexcept
   {
@@ -227,7 +233,7 @@ TEST_F(ROSCommunicationStrategyPublicationTest,
   auto fake_sensor_frame = createRandomFrame();
   auto fake_sensor_frame_copy = DataFlow::Frame(fake_sensor_frame);
 
-  phantom_intelligence_driver::ros_communication::ROSCommunicationStrategy ros_communication_strategy(TEST_TOPIC_NAME);
+  phantom_intelligence_driver::ros_communication::ROSCommunicationStrategy<FakeDataStructures> ros_communication_strategy(TEST_TOPIC_NAME);
 
   FrameMessageCatcher frame_message_catcher;
   ros::NodeHandle node_handle;

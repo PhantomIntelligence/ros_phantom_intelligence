@@ -48,12 +48,17 @@ namespace phantom_intelligence_driver
   namespace awl16
   {
 
-    using AWL16AccessLink = SensorGateway::AWL16AccessLink;
+    using SensorGateway::AWL16AccessLink;
+    using SensorGateway::AWL16SpiritStructures;
 
-    class AWL16Connection final : public SensorConnection
+    class AWL16Connection final : public SensorConnection<AWL16SpiritStructures>
     {
     protected:
-      using super = SensorConnection;
+      using super = SensorConnection<AWL16SpiritStructures>;
+      using super::assertConnectionHasNotBeenEstablished;
+      using super::completeConnection;
+      using super::assertConnectionHasNotBeenRuptured;
+      using super::completeDisconnect;
 
     public:
       explicit AWL16Connection(std::string const& device_location);
