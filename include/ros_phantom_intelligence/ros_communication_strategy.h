@@ -41,6 +41,10 @@
 #include <ros/ros.h>
 #include <sensor-gateway/server-communication/ServerCommunicationStrategy.hpp>
 
+#include "phantom_intelligence/PhantomIntelligenceHeader.h"
+
+#include "phantom_intelligence/PhantomIntelligenceRawData.h"
+
 #include "phantom_intelligence/PhantomIntelligenceFrame.h"
 #include "phantom_intelligence/PhantomIntelligencePixel.h"
 #include "phantom_intelligence/PhantomIntelligenceTrack.h"
@@ -50,8 +54,6 @@ namespace phantom_intelligence_driver
 
   namespace ros_communication
   {
-
-    using FrameMessage = DataFlow::Frame;
 
     template<class T>
     class ROSCommunicationStrategy : public ServerCommunication::ServerCommunicationStrategy<T>
@@ -64,16 +66,36 @@ namespace phantom_intelligence_driver
       using Message = typename super::Message;
       using RawData = typename super::RawData;
 
-      using Frame = phantom_intelligence::PhantomIntelligenceFrame;
-      using Pixel = phantom_intelligence::PhantomIntelligencePixel;
-      using Track = phantom_intelligence::PhantomIntelligenceTrack;
-      using PublicizedMessage = Frame;
+      using ROSRawData = phantom_intelligence::PhantomIntelligenceRawData;
+
+      using ROSFrame = phantom_intelligence::PhantomIntelligenceFrame;
+      using ROSPixel = phantom_intelligence::PhantomIntelligencePixel;
+      using ROSTrack = phantom_intelligence::PhantomIntelligenceTrack;
 
     public:
 
+      static std::string fetchMessageTopicName(std::string const& sensor_topic_name) noexcept
+      {
+        std::ostringstream message_topic_name(sensor_topic_name, std::ios_base::ate);
+        message_topic_name << "_message";
+        return message_topic_name.str();
+      }
+
+      static std::string fetchRawDataTopicName(std::string const& sensor_topic_name) noexcept
+      {
+        std::ostringstream fetch_raw_data_name(sensor_topic_name, std::ios_base::ate);
+        fetch_raw_data_name << "_raw_data";
+        return fetch_raw_data_name.str();
+      }
+
       explicit ROSCommunicationStrategy(std::string const& sensor_model) :
           sensor_model_(sensor_model),
-          message_publisher_(node_handle_.advertise<PublicizedMessage>(sensor_model, 1000))
+          message_publisher_(node_handle_.advertise<ROSFrame>(
+              fetchMessageTopicName(sensor_model), 1000)
+          ),
+          raw_data_publisher_(node_handle_.advertise<ROSRawData>(
+              fetchRawDataTopicName(sensor_model), 1000)
+          )
       {
       }
 
@@ -99,23 +121,22 @@ namespace phantom_intelligence_driver
         if(ros::ok())
         {
 
-          Frame msg;
+          ROSFrame msg;
 
-          msg.header.stamp = ros::Time::now();
-          msg.header.seq++;
+          msg.header.header.stamp = ros::Time::now();
+          msg.header.header.seq++;
+          msg.header.system_id = message.systemID;
 
-          msg.frame_id = message.frameID;
-          msg.system_id = message.systemID;
+          msg.id = message.frameID;
 
           auto pixels = *message.getPixels();
-          uint16_t number_of_pixels = pixels.size();
+          uint16_t const number_of_pixels = pixels.size();
           msg.pixels.reserve(number_of_pixels);
-          ROS_INFO("%s", std::to_string(number_of_pixels));
 
-          for (unsigned int pixel_iterator = 0; pixel_iterator < number_of_pixels; ++pixel_iterator)
+          for (auto pixel_iterator = 0u; pixel_iterator < number_of_pixels; ++pixel_iterator)
           {
 
-            Pixel current_pixel;
+            ROSPixel current_pixel;
 
             current_pixel.id = pixel_iterator;
 
@@ -130,10 +151,10 @@ namespace phantom_intelligence_driver
 
               current_pixel.tracks.reserve(number_of_tracks);
 
-              for (unsigned int track_iterator = 0; track_iterator < number_of_tracks; ++track_iterator)
+              for (auto track_iterator = 0u; track_iterator < number_of_tracks; ++track_iterator)
               {
 
-                Track current_track;
+                ROSTrack current_track;
                 auto track_from_message = &tracks[track_iterator];
 
                 current_track.id = track_from_message->ID;
@@ -158,6 +179,24 @@ namespace phantom_intelligence_driver
 
       void sendRawData(RawData&& raw_data) override
       {
+        if(ros::ok())
+        {
+
+          ROSRawData msg;
+
+          msg.header.header.stamp = ros::Time::now();
+          msg.header.header.seq++;
+
+          auto raw_data_content = raw_data.content;
+          uint16_t const number_of_values = raw_data_content.size();
+          msg.data.reserve(number_of_values);
+
+          std::copy_n(raw_data_content.begin(), number_of_values, msg.data.begin());
+
+          raw_data_publisher_.publish(msg);
+
+          ros::spinOnce();
+        }
       }
 
       void closeConnection() override
@@ -171,6 +210,7 @@ namespace phantom_intelligence_driver
 
       ros::NodeHandle node_handle_;
       ros::Publisher message_publisher_;
+      ros::Publisher raw_data_publisher_;
     };
   }
 }

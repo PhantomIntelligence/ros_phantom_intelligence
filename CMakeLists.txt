@@ -40,6 +40,8 @@ find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 add_message_files(
         DIRECTORY msg
         FILES
+        PhantomIntelligenceHeader.msg
+        PhantomIntelligenceRawData.msg
         PhantomIntelligenceFrame.msg
         PhantomIntelligencePixel.msg
         PhantomIntelligenceTrack.msg

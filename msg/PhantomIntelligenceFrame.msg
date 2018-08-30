@@ -1,6 +1,4 @@
-Header header                       # In header.frame_id is not
-                                    #   used for this message
+PhantomIntelligenceHeader header
 
-uint16 frame_id
-uint16 system_id
+uint16 id
 PhantomIntelligencePixel[] pixels

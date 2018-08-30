@@ -51,8 +51,6 @@ namespace phantom_intelligence_driver
     UNDEFINED
   };
 
-  using ros_communication::FrameMessage;
-
   template<class T>
   class SensorConnection
   {
@@ -110,7 +108,7 @@ namespace phantom_intelligence_driver
       ROS_INFO("Disconnection complete!");
     }
 
-    ros_communication::ROSCommunicationStrategy <T> ros_communication_strategy_;
+    ros_communication::ROSCommunicationStrategy<T> ros_communication_strategy_;
 
   private:
 

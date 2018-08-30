@@ -44,21 +44,28 @@
 
 #include "ros_phantom_intelligence/ros_communication_strategy.h"
 
-#include "phantom_intelligence/PhantomIntelligenceFrame.h"
-#include "phantom_intelligence/PhantomIntelligencePixel.h"
-#include "phantom_intelligence/PhantomIntelligenceTrack.h"
+static size_t const NUMBER_OF_RAW_DATA_CHANNELS = 1;
 
+static size_t const NUMBER_OF_SAMPLES_PER_CHANNEL = 10;
 
-using Frame = phantom_intelligence::PhantomIntelligenceFrame;
-using Pixel = phantom_intelligence::PhantomIntelligencePixel;
-using Track = phantom_intelligence::PhantomIntelligenceTrack;
+using FakeRawDataDefinition = typename
+Sensor::RawDataDefinition<int16_t, NUMBER_OF_RAW_DATA_CHANNELS, NUMBER_OF_SAMPLES_PER_CHANNEL>;
+using FakeDataStructures = typename Sensor::Spirit::Structures<FakeRawDataDefinition>;
+
+using SensorFrame = DataFlow::Frame;
+using SensorPixel = DataFlow::Pixel;
+using SensorTrack = DataFlow::Track;
+
+using ROSRawData = phantom_intelligence::PhantomIntelligenceRawData;
+
+using ROSFrame = phantom_intelligence::PhantomIntelligenceFrame;
+using ROSPixel = phantom_intelligence::PhantomIntelligencePixel;
+using ROSTrack = phantom_intelligence::PhantomIntelligenceTrack;
 
 class ROSCommunicationStrategyPublicationTest : public ::testing::Test
 {
 protected:
-   std::string const TEST_TOPIC_NAME = "UNDEFINED";
-
-  static size_t const NUMBER_OF_RAW_DATA_FOR_TEST = 10;
+  std::string const TEST_TOPIC_NAME = "UNDEFINED";
 
   ROSCommunicationStrategyPublicationTest()
   {
@@ -68,15 +75,12 @@ protected:
   {
   }
 
-  using FakeRawDataContent = typename Sensor::RawDataContent<int16_t, NUMBER_OF_RAW_DATA_FOR_TEST>;
-  using FakeDataStructures = typename Sensor::Spirit::Structures<FakeRawDataContent>;
-
-  DataFlow::Frame createRandomFrame() const noexcept
+  SensorFrame createRandomFrame() const noexcept
   {
-    DataFlow::Frame frame;
+    SensorFrame frame;
     std::default_random_engine random_engine(std::random_device{}());
 
-    std::uniform_int_distribution <DataFlow::FrameID> frame_id_distribution(
+    std::uniform_int_distribution <DataFlow::FrameID> id_distribution(
         std::numeric_limits<DataFlow::FrameID>::lowest(),
         std::numeric_limits<DataFlow::FrameID>::max());
 
@@ -84,14 +88,14 @@ protected:
         std::numeric_limits<DataFlow::SystemID>::lowest(),
         std::numeric_limits<DataFlow::SystemID>::max());
 
-    frame.frameID = frame_id_distribution(random_engine);
+    frame.frameID = id_distribution(random_engine);
     frame.systemID = system_id_distribution(random_engine);
     std::bernoulli_distribution populate_pixel(0.5); // True 50% of time
     std::bernoulli_distribution populate_track(0.1); // True 10% of time
     auto max_number_of_pixel = Sensor::AWL::_16::NUMBER_OF_PIXELS_IN_FRAME;
     auto max_number_of_track = Sensor::AWL::_16::NUMBER_OF_TRACKS_IN_PIXEL;
 
-    for (DataFlow::PixelID pixel_id = 0; pixel_id < max_number_of_pixel; ++pixel_id)
+    for (auto pixel_id = 0u; pixel_id < max_number_of_pixel; ++pixel_id)
     {
       if(populate_pixel(random_engine))
       {
@@ -99,7 +103,7 @@ protected:
         {
           if(populate_track(random_engine))
           {
-            frame.addTrackToPixelWithID(pixel_id, std::move(createRandomTrack(&random_engine)));
+            frame.addTrackToPixelWithID(pixel_id, std::move(createRandomSensorTrack(&random_engine)));
           }
         }
       }
@@ -107,21 +111,21 @@ protected:
     return frame;
   }
 
-  Frame createExpectedMessageFromSensorFrame(DataFlow::Frame sensor_frame)
+  ROSFrame createExpectedMessageFromSensorFrame(SensorFrame sensor_frame)
   {
-    Frame expected_frame;
+    ROSFrame expected_frame;
 
-    expected_frame.frame_id = sensor_frame.frameID;
-    expected_frame.system_id = sensor_frame.systemID;
+    expected_frame.header.system_id = sensor_frame.systemID;
+    expected_frame.id = sensor_frame.frameID;
 
     auto pixels = *sensor_frame.getPixels();
     uint16_t number_of_pixels = pixels.size();
     expected_frame.pixels.reserve(number_of_pixels);
 
-    for (unsigned int pixel_iterator = 0; pixel_iterator < number_of_pixels; ++pixel_iterator)
+    for (auto pixel_iterator = 0u; pixel_iterator < number_of_pixels; ++pixel_iterator)
     {
 
-      Pixel current_pixel;
+      ROSPixel current_pixel;
 
       current_pixel.id = pixel_iterator;
 
@@ -134,10 +138,10 @@ protected:
 
         current_pixel.tracks.reserve(number_of_tracks);
 
-        for (unsigned int track_iterator = 0; track_iterator < number_of_tracks; ++track_iterator)
+        for (auto track_iterator = 0u; track_iterator < number_of_tracks; ++track_iterator)
         {
 
-          Track current_track;
+          ROSTrack current_track;
           auto track_from_sensor_frame = &tracks[track_iterator];
 
           current_track.id = track_from_sensor_frame->ID;
@@ -155,12 +159,44 @@ protected:
     }
 
     return expected_frame;
+  }
 
+  FakeDataStructures::RawData createRandomRawData() const noexcept
+  {
+    FakeDataStructures::RawData raw_data;
+    std::default_random_engine random_engine(std::random_device{}());
+
+    std::uniform_int_distribution <FakeRawDataDefinition::ValueType> raw_data_value_distribution(
+        std::numeric_limits<FakeRawDataDefinition::ValueType>::lowest(),
+        std::numeric_limits<FakeRawDataDefinition::ValueType>::max());
+
+    auto max_number_of_values = FakeRawDataDefinition::SIZE;
+
+    for (auto value_id = 0u; value_id < max_number_of_values; ++value_id)
+    {
+      raw_data.content[value_id] = raw_data_value_distribution(random_engine);
+    }
+    return raw_data;
+  }
+
+  ROSRawData createExpectedRawDataFromSpiritRawData(FakeDataStructures::RawData sensor_raw_data)
+  {
+    ROSRawData expected_raw_data;
+
+    auto raw_data_values = sensor_raw_data.content;
+    expected_raw_data.data.reserve(raw_data_values.size());
+
+    for (auto raw_data_value_iterator = 0u; raw_data_value_iterator < raw_data_values.size(); ++raw_data_value_iterator)
+    {
+      expected_raw_data.data[raw_data_value_iterator] = raw_data_values[raw_data_value_iterator];
+    }
+
+    return expected_raw_data;
   }
 
 private:
 
-  static DataFlow::Track createRandomTrack(std::default_random_engine* random_engine)
+  static SensorTrack createRandomSensorTrack(std::default_random_engine* random_engine)
   {
     std::uniform_int_distribution <DataFlow::TrackID> track_id_distribution(
         std::numeric_limits<DataFlow::TrackID>::lowest(),
@@ -186,99 +222,168 @@ private:
         std::numeric_limits<DataFlow::Speed>::lowest(),
         std::numeric_limits<DataFlow::Speed>::max());
 
-    DataFlow::Track track(track_id_distribution(*random_engine),
-                          confidence_level_distribution(*random_engine),
-                          intensity_distribution(*random_engine),
-                          acceleration_distribution(*random_engine),
-                          distance_distribution(*random_engine),
-                          speed_distribution(*random_engine));
+    SensorTrack track(track_id_distribution(*random_engine),
+                      confidence_level_distribution(*random_engine),
+                      intensity_distribution(*random_engine),
+                      acceleration_distribution(*random_engine),
+                      distance_distribution(*random_engine),
+                      speed_distribution(*random_engine));
 
     return track;
   }
 };
 
-struct FrameMessageCatcher
+struct ROSFrameMessageCatcher
 {
-  FrameMessageCatcher()
+  ROSFrameMessageCatcher()
   {
   }
 
-  void captureFrame(Frame const& frame)
+  void captureROSFrame(ROSFrame const& frame)
   {
     caught_frame_.set_value(frame);
   }
 
-  Frame fetchCaughtFrame()
+  ROSFrame fetchCaughtROSFrame()
   {
     auto future_frame = caught_frame_.get_future();
     future_frame.wait();
     return future_frame.get();
   }
 
-  std::promise<Frame> caught_frame_;
+  std::promise<ROSFrame> caught_frame_;
 };
 
 static void spinUntilTestIsOver(std::atomic<bool>* test_is_over)
 {
-  while(!test_is_over->load())
+  while (!test_is_over->load())
   {
     ros::spinOnce();
   }
 }
 
 TEST_F(ROSCommunicationStrategyPublicationTest,
-    given_aFrameFromTheGateway_when_sendMessage_then_willPublishACorrectlyFormattedSpiritFrame )
+    given_aFrameFromTheGateway_when_sendMessage_then_willPublishACorrectlyFormattedROSFrame)
 {
   std::atomic<bool> test_is_over(false);
   auto fake_sensor_frame = createRandomFrame();
-  auto fake_sensor_frame_copy = DataFlow::Frame(fake_sensor_frame);
+  auto fake_sensor_frame_copy = SensorFrame(fake_sensor_frame);
 
-  phantom_intelligence_driver::ros_communication::ROSCommunicationStrategy<FakeDataStructures> ros_communication_strategy(TEST_TOPIC_NAME);
+  phantom_intelligence_driver::ros_communication::ROSCommunicationStrategy<FakeDataStructures>
+      ros_communication_strategy(TEST_TOPIC_NAME);
 
-  FrameMessageCatcher frame_message_catcher;
+  ROSFrameMessageCatcher frame_message_catcher;
   ros::NodeHandle node_handle;
-  ros::Subscriber subscriber = node_handle.subscribe(TEST_TOPIC_NAME, 1000, &FrameMessageCatcher::captureFrame, &frame_message_catcher);
+  auto message_topic_name = ros_communication_strategy.fetchMessageTopicName(TEST_TOPIC_NAME);
+  ros::Subscriber subscriber = node_handle.subscribe(message_topic_name,
+                                                     1000,
+                                                     &ROSFrameMessageCatcher::captureROSFrame,
+                                                     &frame_message_catcher);
+
   JoinableThread spinning_thread(spinUntilTestIsOver, &test_is_over);
 
   ros_communication_strategy.sendMessage(std::move(fake_sensor_frame));
 
   auto expected_message = createExpectedMessageFromSensorFrame(fake_sensor_frame_copy);
-  Frame actual_message;
-  actual_message = frame_message_catcher.fetchCaughtFrame();
 
-  ASSERT_EQ(expected_message.frame_id, actual_message.frame_id);
-  ASSERT_EQ(expected_message.system_id, actual_message.system_id);
+  ROSFrame actual_message = frame_message_catcher.fetchCaughtROSFrame();
+
+  ASSERT_EQ(expected_message.id, actual_message.id);
+  ASSERT_EQ(expected_message.header.system_id, actual_message.header.system_id);
 
   auto expected_pixels = expected_message.pixels;
   auto actual_pixels = actual_message.pixels;
 
   ASSERT_EQ(expected_pixels.size(), actual_pixels.size());
 
-  for(auto pixel_iterator = 0; pixel_iterator < expected_pixels.size(); ++pixel_iterator)
+  for (auto pixel_iterator = 0; pixel_iterator < expected_pixels.size(); ++pixel_iterator)
   {
     auto expected_pixel = expected_pixels[pixel_iterator];
     auto actual_pixel = actual_pixels[pixel_iterator];
 
-    ASSERT_EQ(expected_pixel.id, actual_pixel.id);
+    ASSERT_EQ(expected_pixel .id, actual_pixel.id);
 
     auto expected_tracks = expected_pixel.tracks;
+
     auto actual_tracks = actual_pixel.tracks;
 
     ASSERT_EQ(expected_tracks.size(), actual_tracks.size());
 
-    for(auto track_iterator = 0; track_iterator < expected_tracks.size(); ++track_iterator)
+    for (auto track_iterator = 0; track_iterator < expected_tracks.size(); ++track_iterator)
     {
-    auto expected_track = expected_tracks[track_iterator];
-    auto actual_track = actual_tracks[track_iterator];
+      auto expected_track = expected_tracks[track_iterator];
 
-    ASSERT_EQ(expected_track.id, actual_track.id);
-    ASSERT_EQ(expected_track.confidence_level, actual_track.confidence_level);
-    ASSERT_EQ(expected_track.intensity, actual_track.intensity);
-    ASSERT_EQ(expected_track.acceleration, actual_track.acceleration);
-    ASSERT_EQ(expected_track.distance, actual_track.distance);
-    ASSERT_EQ(expected_track.speed, actual_track.speed);
+      auto actual_track = actual_tracks[track_iterator];
+
+      ASSERT_EQ(expected_track.id, actual_track.id);
+      ASSERT_EQ(expected_track.confidence_level, actual_track.confidence_level);
+      ASSERT_EQ(expected_track.intensity, actual_track.intensity);
+      ASSERT_EQ(expected_track.acceleration, actual_track.acceleration);
+      ASSERT_EQ(expected_track.distance, actual_track.distance);
+      ASSERT_EQ(expected_track.speed, actual_track.speed);
     }
   }
+
   test_is_over.store(true);
   spinning_thread.join();
 }
+
+struct ROSRawDataCatcher
+{
+  ROSRawDataCatcher()
+  {
+  }
+
+  void captureROSRawData(ROSRawData const& raw_data)
+  {
+    caught_raw_data_.set_value(raw_data);
+  }
+
+  ROSRawData fetchCaughtROSRawData()
+  {
+    auto future_raw_data = caught_raw_data_.get_future();
+    future_raw_data.wait();
+    return future_raw_data.get();
+  }
+
+  std::promise<ROSRawData> caught_raw_data_;
+};
+
+TEST_F(ROSCommunicationStrategyPublicationTest,
+    given_rawDataFromTheGateway_when_sendRawData_then_willPublishACorrectlyFormattedROSRawData)
+{
+  std::atomic<bool> test_is_over(false);
+  auto fake_raw_data = createRandomRawData();
+  auto fake_raw_data_copy = FakeDataStructures::RawData(fake_raw_data);
+
+  phantom_intelligence_driver::ros_communication::ROSCommunicationStrategy<FakeDataStructures>
+      ros_communication_strategy(TEST_TOPIC_NAME);
+
+  ROSRawDataCatcher raw_data_catcher;
+  ros::NodeHandle node_handle;
+  auto raw_data_topic_name = ros_communication_strategy.fetchRawDataTopicName(TEST_TOPIC_NAME);
+  ros::Subscriber subscriber = node_handle.subscribe(raw_data_topic_name,
+                                                     1000,
+                                                     &ROSRawDataCatcher::captureROSRawData,
+                                                     &raw_data_catcher);
+
+  JoinableThread spinning_thread(spinUntilTestIsOver, &test_is_over);
+
+  ros_communication_strategy.sendRawData(std::move(fake_raw_data));
+
+  auto expected_raw_data = createExpectedRawDataFromSpiritRawData(fake_raw_data_copy);
+
+  ROSRawData actual_raw_data = raw_data_catcher.fetchCaughtROSRawData();
+
+  ASSERT_EQ(expected_raw_data.data.size(), actual_raw_data.data.size());
+
+  for (auto raw_data_value_iterator = 0u; raw_data_value_iterator < expected_raw_data.data.size(); ++raw_data_value_iterator)
+  {
+    ASSERT_EQ(expected_raw_data.data[raw_data_value_iterator],
+                actual_raw_data.data[raw_data_value_iterator]);
+  }
+
+  test_is_over.store(true);
+  spinning_thread.join();
+}
+
