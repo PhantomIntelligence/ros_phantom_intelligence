@@ -123,7 +123,7 @@ namespace phantom_intelligence_driver
           return "AWL16";
           break;
         case SensorModel::GUARDIAN:
-          return "GUARDIAN";
+          return "Guardian";
           break;
         case SensorModel::UNDEFINED:
         default:

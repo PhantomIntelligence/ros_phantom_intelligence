@@ -95,7 +95,9 @@ namespace phantom_intelligence_driver
           ),
           raw_data_publisher_(node_handle_.advertise<ROSRawData>(
               fetchRawDataTopicName(sensor_model), 1000)
-          )
+          ),
+          message_sequence_(0),
+          raw_data_sequence_(0)
       {
       }
 
@@ -124,7 +126,7 @@ namespace phantom_intelligence_driver
           ROSFrame msg;
 
           msg.header.header.stamp = ros::Time::now();
-          msg.header.header.seq++;
+          msg.header.header.seq = message_sequence_++;
           msg.header.system_id = message.systemID;
 
           msg.id = message.frameID;
@@ -185,13 +187,16 @@ namespace phantom_intelligence_driver
           ROSRawData msg;
 
           msg.header.header.stamp = ros::Time::now();
-          msg.header.header.seq++;
+          msg.header.header.seq = raw_data_sequence_++;
 
           auto raw_data_content = raw_data.content;
           uint16_t const number_of_values = raw_data_content.size();
           msg.data.reserve(number_of_values);
 
-          std::copy_n(raw_data_content.begin(), number_of_values, msg.data.begin());
+          for (auto raw_data_value_iterator = 0u; raw_data_value_iterator < number_of_values; ++raw_data_value_iterator)
+          {
+            msg.data[raw_data_value_iterator] = raw_data_content[raw_data_value_iterator];
+          }
 
           raw_data_publisher_.publish(msg);
 
@@ -211,6 +216,9 @@ namespace phantom_intelligence_driver
       ros::NodeHandle node_handle_;
       ros::Publisher message_publisher_;
       ros::Publisher raw_data_publisher_;
+
+      uint32_t message_sequence_;
+      uint32_t raw_data_sequence_;
     };
   }
 }
