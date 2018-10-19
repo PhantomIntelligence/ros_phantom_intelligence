@@ -111,3 +111,6 @@ srv/_*.py
 CATKIN_IGNORE
 
 
+# Doxygen
+doc/html
+doc/manifest.yaml

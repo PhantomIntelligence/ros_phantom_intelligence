@@ -80,16 +80,16 @@ protected:
     SensorFrame frame;
     std::default_random_engine random_engine(std::random_device{}());
 
-    std::uniform_int_distribution <DataFlow::FrameID> id_distribution(
-        std::numeric_limits<DataFlow::FrameID>::lowest(),
-        std::numeric_limits<DataFlow::FrameID>::max());
+    std::uniform_int_distribution <DataFlow::FrameId> id_distribution(
+        std::numeric_limits<DataFlow::FrameId>::lowest(),
+        std::numeric_limits<DataFlow::FrameId>::max());
 
-    std::uniform_int_distribution <DataFlow::SystemID> system_id_distribution(
-        std::numeric_limits<DataFlow::SystemID>::lowest(),
-        std::numeric_limits<DataFlow::SystemID>::max());
+    std::uniform_int_distribution <DataFlow::SystemId> system_id_distribution(
+        std::numeric_limits<DataFlow::SystemId>::lowest(),
+        std::numeric_limits<DataFlow::SystemId>::max());
 
-    frame.frameID = id_distribution(random_engine);
-    frame.systemID = system_id_distribution(random_engine);
+    frame.frameId = id_distribution(random_engine);
+    frame.systemId = system_id_distribution(random_engine);
     std::bernoulli_distribution populate_pixel(0.5); // True 50% of time
     std::bernoulli_distribution populate_track(0.1); // True 10% of time
     auto max_number_of_pixel = Sensor::AWL::_16::NUMBER_OF_PIXELS_IN_FRAME;
@@ -103,7 +103,7 @@ protected:
         {
           if(populate_track(random_engine))
           {
-            frame.addTrackToPixelWithID(pixel_id, std::move(createRandomSensorTrack(&random_engine)));
+            frame.addTrackToPixelWithId(pixel_id, std::move(createRandomSensorTrack(&random_engine)));
           }
         }
       }
@@ -115,8 +115,8 @@ protected:
   {
     ROSFrame expected_frame;
 
-    expected_frame.header.system_id = sensor_frame.systemID;
-    expected_frame.id = sensor_frame.frameID;
+    expected_frame.header.system_id = sensor_frame.systemId;
+    expected_frame.id = sensor_frame.frameId;
 
     auto pixels = *sensor_frame.getPixels();
     uint16_t number_of_pixels = pixels.size();
@@ -144,7 +144,7 @@ protected:
           ROSTrack current_track;
           auto track_from_sensor_frame = &tracks[track_iterator];
 
-          current_track.id = track_from_sensor_frame->ID;
+          current_track.id = track_from_sensor_frame->id;
           current_track.confidence_level = track_from_sensor_frame->confidenceLevel;
           current_track.intensity = track_from_sensor_frame->intensity;
           current_track.acceleration = track_from_sensor_frame->acceleration;
@@ -198,9 +198,9 @@ private:
 
   static SensorTrack createRandomSensorTrack(std::default_random_engine* random_engine)
   {
-    std::uniform_int_distribution <DataFlow::TrackID> track_id_distribution(
-        std::numeric_limits<DataFlow::TrackID>::lowest(),
-        std::numeric_limits<DataFlow::TrackID>::max());
+    std::uniform_int_distribution <DataFlow::TrackId> track_id_distribution(
+        std::numeric_limits<DataFlow::TrackId>::lowest(),
+        std::numeric_limits<DataFlow::TrackId>::max());
 
     std::uniform_int_distribution <DataFlow::ConfidenceLevel> confidence_level_distribution(
         std::numeric_limits<DataFlow::ConfidenceLevel>::lowest(),

@@ -127,9 +127,9 @@ namespace phantom_intelligence_driver
 
           msg.header.header.stamp = ros::Time::now();
           msg.header.header.seq = message_sequence_++;
-          msg.header.system_id = message.systemID;
+          msg.header.system_id = message.systemId;
 
-          msg.id = message.frameID;
+          msg.id = message.frameId;
 
           auto pixels = *message.getPixels();
           uint16_t const number_of_pixels = pixels.size();
@@ -159,7 +159,7 @@ namespace phantom_intelligence_driver
                 ROSTrack current_track;
                 auto track_from_message = &tracks[track_iterator];
 
-                current_track.id = track_from_message->ID;
+                current_track.id = track_from_message->id;
                 current_track.confidence_level = track_from_message->confidenceLevel;
                 current_track.intensity = track_from_message->intensity;
                 current_track.acceleration = track_from_message->acceleration;
