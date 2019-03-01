@@ -4,6 +4,7 @@ LiDAR integration for ROS
 ## Building and Running this package
 
 1. Install the following elements:  
+ - **gcc-8** ---> `sudo apt-get install gcc-8` or `sudo pacman -S gcc-8`... YRMV  
  - [melodic](http://wiki.ros.org/melodic) 
  - [canlib](https://www.kvaser.com/developer/canlib-sdk/) ([linux link](https://www.kvaser.com/linux-drivers-and-sdk/))
  - [conan](https://conan.io/)
