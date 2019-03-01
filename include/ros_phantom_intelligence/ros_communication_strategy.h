@@ -19,12 +19,12 @@
   products derived from this software without specific
   prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  THIS SOFTWARE IS PROVIdED BY THE COPYRIGHT HOLDERS AND
   CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
   OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIdENTAL,
   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
   BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -51,8 +51,6 @@ namespace phantom_intelligence_driver
   namespace ros_communication
   {
 
-    using FrameMessage = DataFlow::Frame;
-
     template<class T>
     class ROSCommunicationStrategy : public ServerCommunication::ServerCommunicationStrategy<T>
     {
@@ -63,11 +61,22 @@ namespace phantom_intelligence_driver
 
       using Message = typename super::Message;
       using RawData = typename super::RawData;
+      using GetParameterValueContent = typename super::GetParameterValueContent;
+      using GetParameterValueContents = typename super::GetParameterValueContents;
+
+      using UnsignedIntegerParameterResponse = typename super::UnsignedIntegerParameterResponse;
+      using SignedIntegerParameterResponse = typename super::SignedIntegerParameterResponse;
+      using RealNumberParameterResponse = typename super::RealNumberParameterResponse;
+      using BooleanParameterResponse = typename super::BooleanParameterResponse;
+      using ParameterErrorResponse = typename super::ParameterErrorResponse;
+      using ErrorMessageResponse = typename super::ErrorMessageResponse;
+
 
       using Frame = phantom_intelligence::PhantomIntelligenceFrame;
       using Pixel = phantom_intelligence::PhantomIntelligencePixel;
       using Track = phantom_intelligence::PhantomIntelligenceTrack;
       using PublicizedMessage = Frame;
+
 
     public:
 
@@ -94,6 +103,12 @@ namespace phantom_intelligence_driver
         ROS_INFO("Connecting %s sensor", sensor_model_.c_str());
       }
 
+      GetParameterValueContents fetchGetParameterValueContents() override
+      {
+        GetParameterValueContents getParameterValueContents;
+        return getParameterValueContents;
+      }
+
       void sendMessage(Message&& message) override
       {
         if(ros::ok())
@@ -104,8 +119,8 @@ namespace phantom_intelligence_driver
           msg.header.stamp = ros::Time::now();
           msg.header.seq++;
 
-          msg.frame_id = message.frameID;
-          msg.system_id = message.systemID;
+          msg.frame_id = message.messageId;
+          msg.system_id = message.sensorId;
 
           auto pixels = *message.getPixels();
           uint16_t number_of_pixels = pixels.size();
@@ -136,7 +151,7 @@ namespace phantom_intelligence_driver
                 Track current_track;
                 auto track_from_message = &tracks[track_iterator];
 
-                current_track.id = track_from_message->ID;
+                current_track.id = track_from_message->id;
                 current_track.confidence_level = track_from_message->confidenceLevel;
                 current_track.intensity = track_from_message->intensity;
                 current_track.acceleration = track_from_message->acceleration;
@@ -157,6 +172,30 @@ namespace phantom_intelligence_driver
       }
 
       void sendRawData(RawData&& raw_data) override
+      {
+      }
+
+//      void sendResponse(UnsignedIntegerParameterResponse&& unsignedIntegerParameterResponse) override
+//      {
+//      }
+//
+//      void sendResponse(SignedIntegerParameterResponse&& signedIntegerParameterResponse) override
+//      {
+//      }
+//
+//      void sendResponse(RealNumberParameterResponse&& realNumberParameterResponse) override
+//      {
+//      }
+//
+//      void sendResponse(BooleanParameterResponse&& booleanParameterResponse) override
+//      {
+//      }
+
+      void sendResponse(ParameterErrorResponse&& parameterErrorResponse) override
+      {
+      }
+
+      void sendResponse(ErrorMessageResponse&& errorMessageResponse) override
       {
       }
 

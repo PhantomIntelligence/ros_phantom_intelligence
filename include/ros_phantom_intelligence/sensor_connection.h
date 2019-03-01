@@ -51,8 +51,6 @@ namespace phantom_intelligence_driver
     UNDEFINED
   };
 
-  using ros_communication::FrameMessage;
-
   template<class T>
   class SensorConnection
   {
@@ -61,6 +59,8 @@ namespace phantom_intelligence_driver
     const std::string PUBLICIZED_TOPIC = "SensorFrame";
 
   public:
+
+    using FrameMessage = typename T::Message;
 
     explicit SensorConnection(SensorModel sensor_model,
                               std::string const& device_location) :
