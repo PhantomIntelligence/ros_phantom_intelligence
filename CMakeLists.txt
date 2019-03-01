@@ -9,6 +9,7 @@ set(EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY "${PROJECT_BINARY_DIR}/lib/${EXTERNAL_GA
 set(EXTERNAL_GATEWAY_INCLUDE_DIR "Defined in the fetchSensorGateway macro")
 set(GATEWAY_DRIVER_LIB gateway_driver)
 set(AWL16_NODE phantom_intelligence_awl16_node)
+set(GUARDIAN_NODE phantom_intelligence_guardian_node)
 set(TEST_EXECUTABLE ${PROJECT_NAME}_test)
 ################################################
 
@@ -40,6 +41,8 @@ find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 add_message_files(
         DIRECTORY msg
         FILES
+        PhantomIntelligenceHeader.msg
+        PhantomIntelligenceRawData.msg
         PhantomIntelligenceFrame.msg
         PhantomIntelligencePixel.msg
         PhantomIntelligenceTrack.msg
@@ -105,9 +108,30 @@ target_link_libraries(${AWL16_NODE}
         )
 #######################################################################################
 
+##### Guardian Node ######################################################################
+file(GLOB GUARDIAN_NODE_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/guardian_node.cpp")
+add_executable(${GUARDIAN_NODE}
+        ${GUARDIAN_NODE_DRIVER_FILES}
+        ${catkin_LIBRARIES}
+        )
+
+add_dependencies(${GUARDIAN_NODE}
+        ${PROJECT_NAME}_generate_messages_cpp
+        ${${GUARDIAN_NODE}_EXPORTED_TARGETS}
+        ${catkin_EXPORTED_TARGETS}
+        )
+
+target_link_libraries(${GUARDIAN_NODE}
+        ${EXTERNAL_GATEWAY_LIB_NAME}
+        ${GATEWAY_DRIVER_LIB}
+        ${catkin_LIBRARIES}
+        )
+#######################################################################################
+
 ## Mark executables and libraries for installation
 install(TARGETS
         ${AWL16_NODE}
+        ${GUARDIAN_NODE}
         ${GATEWAY_DRIVER_LIB}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

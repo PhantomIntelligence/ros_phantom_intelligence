@@ -35,46 +35,25 @@
 
 */
 
-#ifndef ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
-#define ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
+#include "ros_phantom_intelligence/guardian_connection.h"
 
-#include <sensor-gateway/application/AWL16AccessLink.h>
-
-#include "ros_phantom_intelligence/sensor_connection.h"
-
-namespace phantom_intelligence_driver
+int main(int argc, char** argv)
 {
+  ros::init(argc, argv, "Guardian");
 
-  namespace awl16
-  {
+  std::string device_location;
 
-    using SensorGateway::AWL16AccessLink;
-    using SensorGateway::AWL16GatewayStructures;
-    using Frame = SensorConnection<AWL16GatewayStructures>::FrameMessage;
+  ros::param::param<std::string>("~device_location", device_location, "0");
 
-    class AWL16Connection final : public SensorConnection<AWL16GatewayStructures>
-    {
-    protected:
-      using super = SensorConnection<AWL16GatewayStructures>;
-      using super::assertConnectionHasNotBeenEstablished;
-      using super::completeConnection;
-      using super::assertConnectionHasNotBeenRuptured;
-      using super::completeDisconnect;
+  using GuardianConnection = phantom_intelligence_driver::guardian::GuardianConnection;
+  GuardianConnection sensor_connection(device_location);
 
-    public:
-      explicit AWL16Connection(std::string const& device_location);
+  sensor_connection.start();
 
-      void start() override;
+  std::this_thread::sleep_for(std::chrono::seconds(10000));
 
-      void terminateAndJoin() override;
+  sensor_connection.terminateAndJoin();
 
-    private:
-
-      using super::ros_communication_strategy_;
-
-      AWL16AccessLink awl16_access_link_;
-    };
-  }
+  ros::shutdown();
+  return 0;
 }
-
-#endif //ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H

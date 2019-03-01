@@ -8,6 +8,7 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/encodings.xml
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
@@ -111,3 +112,6 @@ srv/_*.py
 CATKIN_IGNORE
 
 
+# Doxygen
+doc/html
+doc/manifest.yaml
