@@ -49,12 +49,12 @@ namespace phantom_intelligence_driver
   {
 
     using SensorGateway::GuardianAccessLink;
-    using SensorGateway::GuardianSpiritStructures;
+    using SensorGateway::GuardianGatewayStructures;
 
-    class GuardianConnection final : public SensorConnection<GuardianSpiritStructures>
+    class GuardianConnection final : public SensorConnection<GuardianGatewayStructures>
     {
     protected:
-      using super = SensorConnection<GuardianSpiritStructures>;
+      using super = SensorConnection<GuardianGatewayStructures>;
       using super::assertConnectionHasNotBeenEstablished;
       using super::completeConnection;
       using super::assertConnectionHasNotBeenRuptured;

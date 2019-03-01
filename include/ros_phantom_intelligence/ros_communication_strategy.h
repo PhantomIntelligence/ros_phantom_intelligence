@@ -19,12 +19,12 @@
   products derived from this software without specific
   prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  THIS SOFTWARE IS PROVIdED BY THE COPYRIGHT HOLDERS AND
   CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
   OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIdENTAL,
   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
   BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -65,12 +65,23 @@ namespace phantom_intelligence_driver
 
       using Message = typename super::Message;
       using RawData = typename super::RawData;
+      using GetParameterValueContent = typename super::GetParameterValueContent;
+      using GetParameterValueContents = typename super::GetParameterValueContents;
+
+      using UnsignedIntegerParameterResponse = typename super::UnsignedIntegerParameterResponse;
+      using SignedIntegerParameterResponse = typename super::SignedIntegerParameterResponse;
+      using RealNumberParameterResponse = typename super::RealNumberParameterResponse;
+      using BooleanParameterResponse = typename super::BooleanParameterResponse;
+      using ParameterErrorResponse = typename super::ParameterErrorResponse;
+      using ErrorMessageResponse = typename super::ErrorMessageResponse;
+
 
       using ROSRawData = phantom_intelligence::PhantomIntelligenceRawData;
 
       using ROSFrame = phantom_intelligence::PhantomIntelligenceFrame;
       using ROSPixel = phantom_intelligence::PhantomIntelligencePixel;
       using ROSTrack = phantom_intelligence::PhantomIntelligenceTrack;
+
 
     public:
 
@@ -118,6 +129,12 @@ namespace phantom_intelligence_driver
         ROS_INFO("Connecting %s sensor", sensor_model_.c_str());
       }
 
+      GetParameterValueContents fetchGetParameterValueContents() override
+      {
+        GetParameterValueContents getParameterValueContents;
+        return getParameterValueContents;
+      }
+
       void sendMessage(Message&& message) override
       {
         if(ros::ok())
@@ -127,9 +144,9 @@ namespace phantom_intelligence_driver
 
           msg.header.header.stamp = ros::Time::now();
           msg.header.header.seq = message_sequence_++;
-          msg.header.system_id = message.systemId;
+          msg.header.system_id = message.sensorId;
 
-          msg.id = message.frameId;
+          msg.id = message.messageId;
 
           auto pixels = *message.getPixels();
           uint16_t const number_of_pixels = pixels.size();
@@ -202,6 +219,30 @@ namespace phantom_intelligence_driver
 
           ros::spinOnce();
         }
+      }
+
+//      void sendResponse(UnsignedIntegerParameterResponse&& unsignedIntegerParameterResponse) override
+//      {
+//      }
+//
+//      void sendResponse(SignedIntegerParameterResponse&& signedIntegerParameterResponse) override
+//      {
+//      }
+//
+//      void sendResponse(RealNumberParameterResponse&& realNumberParameterResponse) override
+//      {
+//      }
+//
+//      void sendResponse(BooleanParameterResponse&& booleanParameterResponse) override
+//      {
+//      }
+
+      void sendResponse(ParameterErrorResponse&& parameterErrorResponse) override
+      {
+      }
+
+      void sendResponse(ErrorMessageResponse&& errorMessageResponse) override
+      {
       }
 
       void closeConnection() override

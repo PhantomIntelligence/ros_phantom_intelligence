@@ -49,12 +49,13 @@ namespace phantom_intelligence_driver
   {
 
     using SensorGateway::AWL16AccessLink;
-    using SensorGateway::AWL16SpiritStructures;
+    using SensorGateway::AWL16GatewayStructures;
+    using Frame = SensorConnection<AWL16GatewayStructures>::FrameMessage;
 
-    class AWL16Connection final : public SensorConnection<AWL16SpiritStructures>
+    class AWL16Connection final : public SensorConnection<AWL16GatewayStructures>
     {
     protected:
-      using super = SensorConnection<AWL16SpiritStructures>;
+      using super = SensorConnection<AWL16GatewayStructures>;
       using super::assertConnectionHasNotBeenEstablished;
       using super::completeConnection;
       using super::assertConnectionHasNotBeenRuptured;
