@@ -35,53 +35,39 @@
 
 */
 
-#ifndef ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
-#define ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
-
-#include <sensor-gateway/application/AWL16AccessLink.h>
-
-#include "ros_phantom_intelligence/sensor_connection.h"
+#include "ros_phantom_intelligence/eval_adal6110_16_connection.h"
 
 namespace phantom_intelligence_driver
 {
+  using eval_adal6110_16::EVAL_ADAL6110_16_Connection;
 
-  namespace awl16
+  EVAL_ADAL6110_16_Connection::EVAL_ADAL6110_16_Connection(std::string const& device_location) :
+      super(SensorModel::GUARDIAN, device_location),
+      sensorCommunicationStrategy({0x064b, 0x7823,
+                                   (129),
+                                   (1),
+                                   3000}),
+      eval_adal6110_16_access_link_(&ros_communication_strategy_,
+                            &dataTranslationStrategy,
+                            &sensorCommunicationStrategy)
   {
+  }
 
-    using Sensor = SensorGateway::AWL16AccessLink;
-    using AccessLink = Sensor::AccessLink;
-    using GatewayStructures = Sensor::GatewayStructures;
-    using Frame = SensorConnection<GatewayStructures>::FrameMessage;
+  void EVAL_ADAL6110_16_Connection::start()
+  {
+    super::assertConnectionHasNotBeenEstablished();
 
-    using DataTranslationStrategy = Sensor::DataTranslationStrategy;
-    using SensorCommunicationStrategy = Sensor::SensorCommunicationStrategy;
+      eval_adal6110_16_access_link_.start(PUBLICIZED_TOPIC);
 
-    class AWL16Connection final : public SensorConnection<GatewayStructures>
-    {
-    protected:
-      using super = SensorConnection<GatewayStructures>;
-      using super::assertConnectionHasNotBeenEstablished;
-      using super::completeConnection;
-      using super::assertConnectionHasNotBeenRuptured;
-      using super::completeDisconnect;
+    super::completeConnection();
+  }
 
-    public:
-      explicit AWL16Connection(std::string const& device_location);
+  void EVAL_ADAL6110_16_Connection::terminateAndJoin()
+  {
+    super::assertConnectionHasNotBeenRuptured();
 
-      void start() override;
+      eval_adal6110_16_access_link_.terminateAndJoin();
 
-      void terminateAndJoin() override;
-
-    private:
-
-      using super::ros_communication_strategy_;
-
-      DataTranslationStrategy dataTranslationStrategy;
-      SensorCommunicationStrategy sensorCommunicationStrategy;
-
-      AccessLink awl16_access_link_;
-    };
+    super::completeDisconnect();
   }
 }
-
-#endif //ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H

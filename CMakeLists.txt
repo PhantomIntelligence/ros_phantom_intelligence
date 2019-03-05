@@ -18,7 +18,12 @@ setup_ros_cmake_macros(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 fetchSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
         ${EXTERNAL_GATEWAY_DOWNLOAD_DIRECTORY})
-
+include_directories(
+        # include
+        ${catkin_INCLUDE_DIRS}
+        ${GAZEBO_INCLUDE_DIRS}
+)
+link_directories(${GAZEBO_LIBRARY_DIRS})
 ######################################################################
 # Complete instructions on how to build this file are present at:    #
 #       http://wiki.ros.org/catkin/CMakeLists.txt                    #
@@ -27,16 +32,21 @@ fetchSensorGateway(${PROJECT_SOURCE_DIR}/cmake_module
 ## Compile as C++14, 11 is supported in ROS Kinetic and newer, but 14 is required by SensorGateway
 add_compile_options(-std=c++14)
 
+
 ######### catkin macro and libraries ##################################################
 set(${PROJECT_NAME}_CATKIN_DEPS
         roscpp
         message_generation
         std_msgs
+        gazebo_ros
         )
 
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 #######################################################################################
-
+include (FindPkgConfig)
+if (PKG_CONFIG_FOUND)
+    pkg_check_modules(GAZEBO gazebo)
+endif()
 ######### ROS messages and services ###################################################
 add_message_files(
         DIRECTORY msg
@@ -68,12 +78,13 @@ catkin_package(
 include_directories(
         include
         ${EXTERNAL_GATEWAY_INCLUDE_DIR}
-        ${catkin_INCLUDE_DIRS})
+        ${catkin_INCLUDE_DIRS}
+        ${GAZEBO_LIBRARY_DIRS})
 
 ##### Driver Gateway Lib ##############################################################
 file(GLOB GATEWAY_DRIVER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/gateway_driver/*")
 
-add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES})
+add_library(${GATEWAY_DRIVER_LIB} ${GATEWAY_DRIVER_FILES} src/gazebo_driver/awl16_gazebo_ros_translator.cpp)
 
 add_dependencies(${GATEWAY_DRIVER_LIB}
         ${PROJECT_NAME}_generate_messages_cpp
@@ -84,8 +95,14 @@ add_dependencies(${GATEWAY_DRIVER_LIB}
 target_link_libraries(${GATEWAY_DRIVER_LIB}
         ${EXTERNAL_GATEWAY_LIB_NAME}
         ${catkin_LIBRARIES}
+        ${GAZEBO_LIBRARIES}
         )
 
+add_executable(gazebo_awl16_node src/gazebo_driver/awl16_gazebo_ros_translator.cpp)
+link_directories(${GAZEBO_LIBRARY_DIRS})
+target_link_libraries(gazebo_awl16_node ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+
+catkin_package(CATKIN_DEPENDS gazebo_msgs message_runtime)
 #######################################################################################
 
 ##### AWL16 Node ######################################################################

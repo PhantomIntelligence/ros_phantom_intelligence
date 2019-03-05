@@ -43,7 +43,13 @@ namespace phantom_intelligence_driver
 
   GuardianConnection::GuardianConnection(std::string const& device_location) :
       super(SensorModel::GUARDIAN, device_location),
-      guardian_access_link_(&ros_communication_strategy_)
+      sensorCommunicationStrategy({0x058b, 0x0050,
+              (129),
+              (2),
+              3000}),
+      guardian_access_link_(&ros_communication_strategy_,
+                            &dataTranslationStrategy,
+                            &sensorCommunicationStrategy)
   {
   }
 

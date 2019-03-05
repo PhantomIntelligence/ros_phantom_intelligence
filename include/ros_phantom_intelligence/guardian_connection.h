@@ -48,13 +48,18 @@ namespace phantom_intelligence_driver
   namespace guardian
   {
 
-    using SensorGateway::GuardianAccessLink;
-    using SensorGateway::GuardianGatewayStructures;
+      using Sensor = SensorGateway::GuardianAccessLink;
+      using AccessLink = Sensor::AccessLink;
+      using GatewayStructures = Sensor::GatewayStructures;
+      using Frame = SensorConnection<GatewayStructures>::FrameMessage;
 
-    class GuardianConnection final : public SensorConnection<GuardianGatewayStructures>
+      using DataTranslationStrategy = Sensor::DataTranslationStrategy;
+      using SensorCommunicationStrategy = Sensor::SensorCommunicationStrategy;
+
+    class GuardianConnection final : public SensorConnection<GatewayStructures>
     {
     protected:
-      using super = SensorConnection<GuardianGatewayStructures>;
+      using super = SensorConnection<GatewayStructures>;
       using super::assertConnectionHasNotBeenEstablished;
       using super::completeConnection;
       using super::assertConnectionHasNotBeenRuptured;
@@ -71,7 +76,11 @@ namespace phantom_intelligence_driver
 
       using super::ros_communication_strategy_;
 
-      GuardianAccessLink guardian_access_link_;
+
+        DataTranslationStrategy dataTranslationStrategy;
+        SensorCommunicationStrategy sensorCommunicationStrategy;
+
+      AccessLink guardian_access_link_;
     };
   }
 }

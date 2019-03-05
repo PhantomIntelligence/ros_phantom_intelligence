@@ -35,28 +35,28 @@
 
 */
 
-#ifndef ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
-#define ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
+#ifndef ROS_PHANTOM_INTELLIGENCE_EVAL_ADAL6110_16_CONNECTION_H
+#define ROS_PHANTOM_INTELLIGENCE_EVAL_ADAL6110_16_CONNECTION_H
 
-#include <sensor-gateway/application/AWL16AccessLink.h>
+#include <sensor-gateway/application/EVAL_ADAL6110_16_AccessLink.h>
 
 #include "ros_phantom_intelligence/sensor_connection.h"
 
 namespace phantom_intelligence_driver
 {
 
-  namespace awl16
+  namespace eval_adal6110_16
   {
 
-    using Sensor = SensorGateway::AWL16AccessLink;
-    using AccessLink = Sensor::AccessLink;
-    using GatewayStructures = Sensor::GatewayStructures;
-    using Frame = SensorConnection<GatewayStructures>::FrameMessage;
+      using Sensor = SensorGateway::EVAL_ADAL6110_16_AccessLink;
+      using AccessLink = Sensor::AccessLink;
+      using GatewayStructures = Sensor::GatewayStructures;
+      using Frame = SensorConnection<GatewayStructures>::FrameMessage;
 
-    using DataTranslationStrategy = Sensor::DataTranslationStrategy;
-    using SensorCommunicationStrategy = Sensor::SensorCommunicationStrategy;
+      using DataTranslationStrategy = Sensor::DataTranslationStrategy;
+      using SensorCommunicationStrategy = Sensor::SensorCommunicationStrategy;
 
-    class AWL16Connection final : public SensorConnection<GatewayStructures>
+    class EVAL_ADAL6110_16_Connection final : public SensorConnection<GatewayStructures>
     {
     protected:
       using super = SensorConnection<GatewayStructures>;
@@ -66,7 +66,7 @@ namespace phantom_intelligence_driver
       using super::completeDisconnect;
 
     public:
-      explicit AWL16Connection(std::string const& device_location);
+      explicit EVAL_ADAL6110_16_Connection(std::string const& device_location);
 
       void start() override;
 
@@ -76,12 +76,13 @@ namespace phantom_intelligence_driver
 
       using super::ros_communication_strategy_;
 
-      DataTranslationStrategy dataTranslationStrategy;
-      SensorCommunicationStrategy sensorCommunicationStrategy;
 
-      AccessLink awl16_access_link_;
+        DataTranslationStrategy dataTranslationStrategy;
+        SensorCommunicationStrategy sensorCommunicationStrategy;
+
+      AccessLink eval_adal6110_16_access_link_;
     };
   }
 }
 
-#endif //ROS_PHANTOM_INTELLIGENCE_AWL16CONNECTION_H
+#endif //ROS_PHANTOM_INTELLIGENCE_EVAL_ADAL6110_16_CONNECTION_H

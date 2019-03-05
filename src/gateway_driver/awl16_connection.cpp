@@ -43,7 +43,9 @@ namespace phantom_intelligence_driver
 
   AWL16Connection::AWL16Connection(std::string const& device_location) :
       super(SensorModel::AWL16, device_location),
-      awl16_access_link_(&ros_communication_strategy_)
+      awl16_access_link_(&ros_communication_strategy_,
+              &dataTranslationStrategy,
+              &sensorCommunicationStrategy)
   {
   }
 
