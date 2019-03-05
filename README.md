@@ -34,13 +34,34 @@ LiDAR integration for ROS
     ```
     catkin_make run_tests_phantom_intelligence
     ```
+5. (Required to run a gazebo-simulated Lidar)
+    ```
+    cp -a src/ros_phantom_intelligence/src/lidar_description/. ~/.gazebo/models/
+    ```
 
-## Usage
+## Usage with real sensors
 ### `.launch` file and parameters
 The `.launch` files are named after the different sensors.
 * `device_location` is the location of the sensor on your machine. The format of the location depends of the sensor you use.  
 For `awl` sensors, which uses CAN to communicate, the value represent the **can channel number**.
- 
+
+## Usage with simulated sensors
+1. Sart the roscore from a terminal.
+    ```
+    source ~/ros_ws/devel/setup.bash
+    roscore
+    ```
+2. In an other terminal, launch gazebo_ros with the required world file.
+    ```
+    cd ros_ws/src/ros_phantomintelligence/src/gazebo_driver/worlds
+    rosrun gazebo_ros gazebo romanoff.world
+    ```
+3. In a third terminal:
+    ```
+    cd ros_ws/devel/lib/phantom_intelligence
+    ./gazebo_awl16_node
+    ```
+The simulated sensor now publishes sensor data under the ros topic named /awl16.
 
 ### Example
 > Note: Make sure you are in a terminal which has `source <your_ros_ws>/devel/setup.bash` and also make sure that you have built the `ros_phantom_intelligence` package.
