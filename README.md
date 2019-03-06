@@ -49,17 +49,7 @@ For `awl` sensors, which uses CAN to communicate, the value represent the **can 
 1. Sart the roscore from a terminal.
     ```
     source ~/ros_ws/devel/setup.bash
-    roscore
-    ```
-2. In an other terminal, launch gazebo_ros with the required world file.
-    ```
-    cd ros_ws/src/ros_phantomintelligence/src/gazebo_driver/worlds
-    rosrun gazebo_ros gazebo romanoff.world
-    ```
-3. In a third terminal:
-    ```
-    cd ros_ws/devel/lib/phantom_intelligence
-    ./gazebo_awl16_node
+    roslaunch phantom_intelligence awl16_gazebo.launch
     ```
 The simulated sensor now publishes sensor data under the ros topic named /awl16.
 

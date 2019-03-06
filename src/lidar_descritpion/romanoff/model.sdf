@@ -73,8 +73,8 @@
 	  </range>
 	</ray>
           <plugin name="laser" filename="libgazebo_ros_laser.so">
-            <topicName>/scan1</topicName>
-            <frameName>hokuyo_link</frameName>
+            <topicName>/awl16</topicName>
+            <frameName>phantom_intelligence</frameName>
           </plugin>
 	</sensor>
 
