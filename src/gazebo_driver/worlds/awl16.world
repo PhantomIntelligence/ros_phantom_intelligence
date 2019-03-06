@@ -16,7 +16,7 @@
         <uri>model://romanoff</uri>
       </include>
       <static>true</static>
-      <pos>0 0 1</pos>
+      <pos>0 0 0</pos>
 
     </model>
 

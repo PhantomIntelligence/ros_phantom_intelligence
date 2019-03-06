@@ -23,7 +23,7 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
         ${GAZEBO_INCLUDE_DIRS}
 )
-link_directories(${GAZEBO_LIBRARY_DIRS})
+
 ######################################################################
 # Complete instructions on how to build this file are present at:    #
 #       http://wiki.ros.org/catkin/CMakeLists.txt                    #
@@ -64,6 +64,7 @@ add_service_files(
 )
 
 generate_messages(DEPENDENCIES std_msgs)
+
 #######################################################################################
 
 ######### catkin specific configuration ###############################################
@@ -145,6 +146,46 @@ target_link_libraries(${GUARDIAN_NODE}
         )
 #######################################################################################
 
+##### Gazebo Plugins ######################################################################
+
+## Compile as C++11, supported in ROS Kinetic and newer
+# add_compile_options(-std=c++11)
+
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
+find_package(catkin REQUIRED COMPONENTS
+        gazebo_plugins
+        gazebo_ros
+        roscpp
+        )
+find_package(gazebo REQUIRED)
+
+catkin_package(
+        INCLUDE_DIRS include
+        CATKIN_DEPENDS gazebo_plugins gazebo_ros roscpp
+)
+## Specify additional locations of header files
+
+include_directories(${std_msgs_INCLUDE_DIRS})
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+include_directories(include)
+include_directories( ${catkin_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIR}
+        ${GAZEBO_INCLUDE_DIRS}
+        )
+
+add_library(awl16_gazebo_plugin src/gazebo_driver/phantom_gazebo_plugins/gazebo_ros_awl16.cpp)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(awl16_gazebo_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${roscpp_LIBRARIES} RayPlugin)
+
+
+
+
+
+############################################################################################
 ## Mark executables and libraries for installation
 install(TARGETS
         ${AWL16_NODE}
