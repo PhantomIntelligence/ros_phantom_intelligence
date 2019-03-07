@@ -46,9 +46,12 @@ The `.launch` files are named after the different sensors.
 For `awl` sensors, which uses CAN to communicate, the value represent the **can channel number**.
 
 ## Usage with simulated sensors
-1. Sart the roscore from a terminal.
+1. Source the ws after making it.
     ```
     source ~/ros_ws/devel/setup.bash
+    ```
+2. Launch the launch file.
+    ```
     roslaunch phantom_intelligence awl16_gazebo.launch
     ```
 The simulated sensor now publishes sensor data under the ros topic named /awl16.
