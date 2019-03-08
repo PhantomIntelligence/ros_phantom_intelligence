@@ -5,11 +5,8 @@
 #include <gazebo/msgs/msgs.hh>
 #include <gazebo/gazebo_client.hh>
 #include <gazebo/gazebo_config.h>
-#include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Vector3.h>
-#include <contact_republisher/contact_msg.h>
-#include <contact_republisher/contacts_msg.h>
 #include <vector>
 #include <sensor_msgs/LaserScan.h>
 #include "phantom_intelligence/PhantomIntelligenceHeader.h"
