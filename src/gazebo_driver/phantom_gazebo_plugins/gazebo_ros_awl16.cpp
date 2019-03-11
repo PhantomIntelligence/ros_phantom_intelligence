@@ -242,8 +242,8 @@ void GazeboRosAWL16::OnScan(ConstLaserScanStampedPtr &_msg)
                 }
 
             }
-            track_msg_first_row.distance = static_cast<unsigned short>(temp_min_distance_first_row);
-            track_msg_second_row.distance = static_cast<unsigned short>(temp_min_distance_second_row);
+            track_msg_first_row.distance = (temp_min_distance_first_row);
+            track_msg_second_row.distance = (temp_min_distance_second_row);
             track_list_first_row.push_back(track_msg_first_row);
             track_list_second_row.push_back(track_msg_second_row);
         }
