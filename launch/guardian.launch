@@ -5,6 +5,7 @@
           type="phantom_intelligence_guardian_node"
           name="phantom_intelligence_guardian_node"
           output="screen"
+          ns="guardian_$(arg device_location)"
           required="true">
         <param name="device_location" value="$(arg device_location)"/>
     </node>

@@ -42,7 +42,7 @@ namespace phantom_intelligence_driver
   using eval_adal6110_16::EVAL_ADAL6110_16_Connection;
 
   EVAL_ADAL6110_16_Connection::EVAL_ADAL6110_16_Connection(std::string const& device_location) :
-      super(SensorModel::GUARDIAN, device_location),
+      super(SensorModel::GUARDIAN),
       sensorCommunicationStrategy({0x064b, 0x7823,
                                    (129),
                                    (1),

@@ -62,8 +62,7 @@ namespace phantom_intelligence_driver
 
     using FrameMessage = typename T::Message;
 
-    explicit SensorConnection(SensorModel sensor_model,
-                              std::string const& device_location) :
+    explicit SensorConnection(SensorModel sensor_model) :
         ros_communication_strategy_(fetchModelName(sensor_model))
     {
     }

@@ -42,7 +42,7 @@ namespace phantom_intelligence_driver
   using guardian::GuardianConnection;
 
   GuardianConnection::GuardianConnection(std::string const& device_location) :
-      super(SensorModel::GUARDIAN, device_location),
+      super(SensorModel::GUARDIAN),
       sensorCommunicationStrategy({0x058b, 0x0050,
               (129),
               (2),

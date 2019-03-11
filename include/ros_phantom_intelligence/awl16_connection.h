@@ -66,7 +66,7 @@ namespace phantom_intelligence_driver
       using super::completeDisconnect;
 
     public:
-      explicit AWL16Connection(std::string const& device_location);
+      explicit AWL16Connection(int32_t const& device_location);
 
       void start() override;
 
