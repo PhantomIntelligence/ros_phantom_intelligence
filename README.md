@@ -1,5 +1,6 @@
 # ros_phantom_intelligence
 LiDAR integration for ROS
+This package has been tested on Ubuntu 16.04 and 18.04 with, respectively, ROS Kinetic and ROS Melodic.
 
 ## Building and Running this package
 
@@ -28,7 +29,7 @@ LiDAR integration for ROS
  	```
  - **gcc-8 and g++8**
  
-    Needed only for ubuntu 16.04
+    Needed only for ubuntu 16.04.
     ```
     sudo apt-get update
     sudo apt-get install build-essential software-properties-common -y
@@ -40,7 +41,7 @@ LiDAR integration for ROS
     ```
     nano ~/.conan/profiles/default
     ```
-    Replace its content by the following lines:
+    Replace its content by the following lines (or add the missing lines):
     ```
     [settings]
     os=Linux
