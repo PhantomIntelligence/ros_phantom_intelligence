@@ -35,39 +35,54 @@
 
 */
 
-#include "ros_phantom_intelligence/guardian_connection.h"
+#ifndef ROS_PHANTOM_INTELLIGENCE_EVAL_ADAL6110_16_CONNECTION_H
+#define ROS_PHANTOM_INTELLIGENCE_EVAL_ADAL6110_16_CONNECTION_H
+
+#include <sensor-gateway/application/EVAL_ADAL6110_16_AccessLink.h>
+
+#include "ros_phantom_intelligence/sensor_connection.h"
 
 namespace phantom_intelligence_driver
 {
-  using guardian::GuardianConnection;
 
-  GuardianConnection::GuardianConnection(std::string const& device_location) :
-      super(SensorModel::GUARDIAN),
-      sensorCommunicationStrategy({0x058b, 0x0050,
-              (129),
-              (2),
-              3000}),
-      guardian_access_link_(&ros_communication_strategy_,
-                            &dataTranslationStrategy,
-                            &sensorCommunicationStrategy)
+  namespace eval_adal6110_16
   {
-  }
 
-  void GuardianConnection::start()
-  {
-    super::assertConnectionHasNotBeenEstablished();
+      using Sensor = SensorGateway::EVAL_ADAL6110_16_AccessLink;
+      using AccessLink = Sensor::AccessLink;
+      using GatewayStructures = Sensor::GatewayStructures;
+      using Frame = SensorConnection<GatewayStructures>::FrameMessage;
 
-    guardian_access_link_.start(PUBLICIZED_TOPIC);
+      using DataTranslationStrategy = Sensor::DataTranslationStrategy;
+      using SensorCommunicationStrategy = Sensor::SensorCommunicationStrategy;
 
-    super::completeConnection();
-  }
+    class EVAL_ADAL6110_16_Connection final : public SensorConnection<GatewayStructures>
+    {
+    protected:
+      using super = SensorConnection<GatewayStructures>;
+      using super::assertConnectionHasNotBeenEstablished;
+      using super::completeConnection;
+      using super::assertConnectionHasNotBeenRuptured;
+      using super::completeDisconnect;
 
-  void GuardianConnection::terminateAndJoin()
-  {
-    super::assertConnectionHasNotBeenRuptured();
+    public:
+      explicit EVAL_ADAL6110_16_Connection(std::string const& device_location);
 
-    guardian_access_link_.terminateAndJoin();
+      void start() override;
 
-    super::completeDisconnect();
+      void terminateAndJoin() override;
+
+    private:
+
+      using super::ros_communication_strategy_;
+
+
+        DataTranslationStrategy dataTranslationStrategy;
+        SensorCommunicationStrategy sensorCommunicationStrategy;
+
+      AccessLink eval_adal6110_16_access_link_;
+    };
   }
 }
+
+#endif //ROS_PHANTOM_INTELLIGENCE_EVAL_ADAL6110_16_CONNECTION_H

@@ -3,7 +3,7 @@
 
 uint16 id
 uint8 confidence_level
-uint16 intensity
-int16 acceleration
-uint16 distance
-int16 speed
+float64 intensity
+float64 acceleration
+float64 distance
+float64 speed

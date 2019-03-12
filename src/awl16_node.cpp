@@ -44,9 +44,10 @@ int main(int argc, char** argv)
   std::string device_location;
 
   ros::param::param<std::string>("~device_location", device_location, "0");
+  int32_t const device_channel = std::stoi(device_location);
 
   using AWL16Connection = phantom_intelligence_driver::awl16::AWL16Connection;
-  AWL16Connection sensor_connection(device_location);
+  AWL16Connection sensor_connection(device_channel);
 
   sensor_connection.start();
 

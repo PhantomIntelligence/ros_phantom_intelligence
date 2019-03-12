@@ -35,38 +35,38 @@
 
 */
 
-#include "ros_phantom_intelligence/guardian_connection.h"
+#include "ros_phantom_intelligence/eval_adal6110_16_connection.h"
 
 namespace phantom_intelligence_driver
 {
-  using guardian::GuardianConnection;
+  using eval_adal6110_16::EVAL_ADAL6110_16_Connection;
 
-  GuardianConnection::GuardianConnection(std::string const& device_location) :
+  EVAL_ADAL6110_16_Connection::EVAL_ADAL6110_16_Connection(std::string const& device_location) :
       super(SensorModel::GUARDIAN),
-      sensorCommunicationStrategy({0x058b, 0x0050,
-              (129),
-              (2),
-              3000}),
-      guardian_access_link_(&ros_communication_strategy_,
+      sensorCommunicationStrategy({0x064b, 0x7823,
+                                   (129),
+                                   (1),
+                                   3000}),
+      eval_adal6110_16_access_link_(&ros_communication_strategy_,
                             &dataTranslationStrategy,
                             &sensorCommunicationStrategy)
   {
   }
 
-  void GuardianConnection::start()
+  void EVAL_ADAL6110_16_Connection::start()
   {
     super::assertConnectionHasNotBeenEstablished();
 
-    guardian_access_link_.start(PUBLICIZED_TOPIC);
+      eval_adal6110_16_access_link_.start(PUBLICIZED_TOPIC);
 
     super::completeConnection();
   }
 
-  void GuardianConnection::terminateAndJoin()
+  void EVAL_ADAL6110_16_Connection::terminateAndJoin()
   {
     super::assertConnectionHasNotBeenRuptured();
 
-    guardian_access_link_.terminateAndJoin();
+      eval_adal6110_16_access_link_.terminateAndJoin();
 
     super::completeDisconnect();
   }

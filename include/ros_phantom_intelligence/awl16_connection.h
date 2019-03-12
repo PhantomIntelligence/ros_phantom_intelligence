@@ -48,21 +48,25 @@ namespace phantom_intelligence_driver
   namespace awl16
   {
 
-    using SensorGateway::AWL16AccessLink;
-    using SensorGateway::AWL16GatewayStructures;
-    using Frame = SensorConnection<AWL16GatewayStructures>::FrameMessage;
+    using Sensor = SensorGateway::AWL16AccessLink;
+    using AccessLink = Sensor::AccessLink;
+    using GatewayStructures = Sensor::GatewayStructures;
+    using Frame = SensorConnection<GatewayStructures>::FrameMessage;
 
-    class AWL16Connection final : public SensorConnection<AWL16GatewayStructures>
+    using DataTranslationStrategy = Sensor::DataTranslationStrategy;
+    using SensorCommunicationStrategy = Sensor::SensorCommunicationStrategy;
+
+    class AWL16Connection final : public SensorConnection<GatewayStructures>
     {
     protected:
-      using super = SensorConnection<AWL16GatewayStructures>;
+      using super = SensorConnection<GatewayStructures>;
       using super::assertConnectionHasNotBeenEstablished;
       using super::completeConnection;
       using super::assertConnectionHasNotBeenRuptured;
       using super::completeDisconnect;
 
     public:
-      explicit AWL16Connection(std::string const& device_location);
+      explicit AWL16Connection(int32_t const& device_location);
 
       void start() override;
 
@@ -72,7 +76,10 @@ namespace phantom_intelligence_driver
 
       using super::ros_communication_strategy_;
 
-      AWL16AccessLink awl16_access_link_;
+      DataTranslationStrategy dataTranslationStrategy;
+      SensorCommunicationStrategy sensorCommunicationStrategy;
+
+      AccessLink awl16_access_link_;
     };
   }
 }
