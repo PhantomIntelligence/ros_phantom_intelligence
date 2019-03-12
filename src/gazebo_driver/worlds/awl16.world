@@ -10,10 +10,10 @@
       <uri>model://ground_plane</uri>
     </include>
 
-    <!-- A testing model that includes the Romanoff sensor model -->
-    <model name="romanoff">
+    <!-- A testing model that includes the AWL16 sensor model -->
+    <model name="awl16">
       <include>
-        <uri>model://romanoff</uri>
+        <uri>model://awl16</uri>
       </include>
       <static>true</static>
       <pos>0 0 0</pos>
