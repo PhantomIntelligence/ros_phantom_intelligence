@@ -112,6 +112,8 @@ The simulated sensor now publishes sensor data under the ros topic named /awl16.
 ```
 roslaunch phantom_intelligence awl16.launch device_location:=0
 ```  
+> Simultaneous use of multiple sensors is not yet supported by this package.
+
 
 ## Running tests
 > Note: Make sure you are in a terminal which has `source <your_ros_ws>/devel/setup.bash` and also make sure that you have built the `ros_phantom_intelligence` package.  
