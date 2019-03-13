@@ -72,7 +72,7 @@
 	    <resolution>0.02</resolution>
 	  </range>
 	</ray>
-          <plugin name="laser" filename="libgazebo_ros_laser.so">
+          <plugin name="laser" filename="libawl16_gazebo_plugin.so">
             <topicName>/awl16</topicName>
             <frameName>phantom_intelligence</frameName>
           </plugin>
